@@ -31,4 +31,10 @@ export const LoginButton = ({
       </Dialog>
     );
   }
+
+  return (
+    <span onClick={onClick} className="cursor-pointer">
+      {children}
+    </span>
+  );
 };
