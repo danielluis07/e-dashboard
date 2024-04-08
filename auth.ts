@@ -1,6 +1,5 @@
 import NextAuth from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { UserRole } from "@prisma/client";
 
 import { getUserById } from "./data/user";
 import { db } from "./lib/db";
@@ -13,6 +12,7 @@ export const {
   auth,
   signIn,
   signOut,
+  unstable_update,
 } = NextAuth({
   pages: {
     signIn: "/auth/login",
@@ -20,7 +20,7 @@ export const {
   },
   events: {
     async linkAccount({ user }) {
-      await db.user.update({
+      await db.myUser.update({
         where: {
           id: user.id,
         },
@@ -57,15 +57,8 @@ export const {
       return true;
     },
     async session({ token, session }) {
-      console.log({
-        sessionToken: token,
-      });
       if (token.sub && session.user) {
         session.user.id = token.sub;
-      }
-
-      if (token.role && session.user) {
-        session.user.role = token.role as UserRole;
       }
 
       if (session.user) {
@@ -92,7 +85,6 @@ export const {
       token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
-      token.role = existingUser.role;
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;

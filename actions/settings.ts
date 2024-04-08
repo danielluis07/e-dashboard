@@ -4,23 +4,33 @@ import * as z from "zod";
 import bcrypt from "bcryptjs";
 
 import { db } from "@/lib/db";
-import { SettingsSchema } from "@/schemas";
+import { SettingsSchema, UpdatePasswordSchema } from "@/schemas";
 import { getUserByEmail, getUserById } from "@/data/user";
 import { currentUser } from "@/lib/auth";
 import { generateVerificationToken } from "@/lib/tokens";
 import { sendVerificationEmail } from "@/lib/mail";
+import { revalidatePath } from "next/cache";
 
-export const settings = async (values: z.infer<typeof SettingsSchema>) => {
+export const updateSettings = async (
+  values: z.infer<typeof SettingsSchema>,
+  params: { storeId: string }
+) => {
   const user = await currentUser();
 
   if (!user) {
-    return { error: "Unauthorized" };
+    return { error: "Não autorizado!" };
+  }
+
+  const validatedFields = SettingsSchema.safeParse(values);
+
+  if (!validatedFields.success) {
+    return { error: "Campos inválidos!" };
   }
 
   const dbUser = await getUserById(user.id);
 
   if (!dbUser) {
-    return { error: "Unauthorized" };
+    return { error: "Não autorizado!" };
   }
 
   if (user.isOAuth) {
@@ -34,7 +44,7 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     const existingUser = await getUserByEmail(values.email);
 
     if (existingUser && existingUser.id !== user.id) {
-      return { error: "Email already in use!" };
+      return { error: "Esse email já está em uso!" };
     }
 
     const verificationToken = await generateVerificationToken(values.email);
@@ -43,7 +53,47 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
       verificationToken.token
     );
 
-    return { success: "Verification email sent!" };
+    return { success: "Email de verificação enviado!" };
+  }
+
+  try {
+    await db.myUser.update({
+      where: { id: dbUser.id },
+      data: {
+        name: values.myUserName,
+        email: values.email,
+        image: values.imageUrl,
+        isTwoFactorEnabled: values.isTwoFactorEnabled,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { error: "Erro ao atualizar as informações" };
+  }
+
+  revalidatePath(`/dashboard/${params.storeId}/settings`);
+  return { success: "Informações atualizadas!" };
+};
+
+export const updatePassword = async (
+  values: z.infer<typeof UpdatePasswordSchema>,
+  params: { storeId: string }
+) => {
+  const user = await currentUser();
+
+  if (!user) {
+    return { error: "Não autorizado!" };
+  }
+
+  const dbUser = await getUserById(user.id);
+
+  if (!dbUser) {
+    return { error: "Não autorizado!" };
+  }
+
+  if (user.isOAuth) {
+    values.password = undefined;
+    values.newPassword = undefined;
   }
 
   if (values.password && values.newPassword && dbUser.password) {
@@ -53,20 +103,26 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     );
 
     if (!passwordsMatch) {
-      return { error: "Incorrect password!" };
+      return { error: "Senha incorreta!" };
     }
 
-    const hashedPassword = await bcrypt.hash(values.newPassword, 10);
-    values.password = hashedPassword;
-    values.newPassword = undefined;
+    try {
+      const hashedPassword = await bcrypt.hash(values.newPassword, 10);
+      values.password = hashedPassword;
+      values.newPassword = undefined;
+
+      await db.myUser.update({
+        where: { id: dbUser.id },
+        data: {
+          password: hashedPassword,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      return { error: "Erro ao atualizar as informações" };
+    }
   }
 
-  const updatedUser = await db.user.update({
-    where: { id: dbUser.id },
-    data: {
-      ...values,
-    },
-  });
-
-  return { success: "Settings Updated!" };
+  revalidatePath(`/dashboard/${params.storeId}/settings`);
+  return { success: "Informações atualizadas!" };
 };

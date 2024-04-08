@@ -27,8 +27,12 @@ export const NewVerificationForm = () => {
 
     newVerification(token)
       .then((data) => {
-        setSuccess(data.success);
-        setError(data.error);
+        if (data.error) {
+          setError(data.error);
+        }
+        if (data.success) {
+          setSuccess(data.success);
+        }
       })
       .catch(() => {
         setError("Algo deu errado!");

@@ -90,7 +90,7 @@ export const login = async (
 
       await db.twoFactorConfirmation.create({
         data: {
-          userId: existingUser.id,
+          myUserId: existingUser.id,
         },
       });
     } else {

@@ -6,7 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginSchema } from "@/schemas";
 import { useSearchParams } from "next/navigation";
 import { Input } from "../ui/input";
-
 import {
   Form,
   FormControl,
@@ -15,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-
 import { CardWrapper } from "./card-wrapper";
 import { Button } from "../ui/button";
 import { FormError } from "../form-error";
@@ -23,8 +21,12 @@ import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa";
 
 export const LoginForm = () => {
+  const [showPassword, setShowPassword] = useState<string | boolean>(false);
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl");
   const urlError =
@@ -98,12 +100,20 @@ export const LoginForm = () => {
                   control={form.control}
                   name="email"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={cn(
+                          "ml-3 absolute transition-all text-slate-400",
+                          field.value
+                            ? "-top-2 text-sm bg-milky text-fuchsia-500 font-thin"
+                            : "top-1/2 transform -translate-y-1/2 text-base"
+                        )}>
+                        Email
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
-                          placeholder="daniel@exemplo.com.br"
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-fuchsia-500"
                           disabled={isPending}
                           type="email"
                         />
@@ -116,16 +126,40 @@ export const LoginForm = () => {
                   control={form.control}
                   name="password"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Senha</FormLabel>
+                    <FormItem className="relative">
+                      <FormLabel
+                        className={cn(
+                          "ml-3 absolute transition-all text-slate-400",
+                          field.value
+                            ? "-top-2 text-sm bg-milky text-fuchsia-500 font-thin"
+                            : "top-5 transform -translate-y-1/2 text-base"
+                        )}>
+                        Senha
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...field}
                           disabled={isPending}
-                          placeholder="******"
-                          type="password"
+                          className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-fuchsia-500"
+                          type={cn(showPassword ? "text" : "password")}
                         />
                       </FormControl>
+                      <div
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={cn(
+                          showPassword && "hidden",
+                          "absolute right-2 top-1"
+                        )}>
+                        <FaRegEye className="text-lg" />
+                      </div>
+                      <div
+                        onClick={() => setShowPassword(!showPassword)}
+                        className={cn(
+                          !showPassword && "hidden",
+                          "absolute right-2 top-1"
+                        )}>
+                        <FaRegEyeSlash className="text-lg" />
+                      </div>
                       <Button
                         size="sm"
                         variant="link"

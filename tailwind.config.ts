@@ -18,8 +18,13 @@ const config = {
       },
     },
     extend: {
+      screens: {
+        sl: "1600px",
+        "md-max": { max: "1280px" },
+      },
       colors: {
         border: "hsl(var(--border))",
+        milky: "rgb(250 250 250)",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",

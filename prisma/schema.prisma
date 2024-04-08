@@ -11,75 +11,358 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum UserRole {
-  ADMIN
-  USER
-}
-
-model User {
+model MyUser {
   id                    String    @id @default(cuid())
   name                  String?
   email                 String?   @unique
   emailVerified         DateTime?
   image                 String?
   password              String?
-  role                  UserRole @default(USER)
   accounts              Account[]
   isTwoFactorEnabled    Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 }
 
-model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+model User {
+  id                    String    @id @default(uuid())
+  username              String?   @unique
+  email                 String?   @unique
+  name                  String?
+  password              String?
+  imageUrl              String?
+  imageName             String?
+  wishlists             Wishlist[]
+  stores                StoreUser[]   @relation("UserToStore")
+  orders                Order[]   
+  reviews               Review[]  @relation("UserToReview")
+  twoFactorConfirmation TwoFactorConfirmation?
+  isTwoFactorEnabled    Boolean @default(false)
+  accounts              Account[]
+  image                 String?
+  emailVerified         DateTime?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model StoreUser {
+  id                    String    @id @default(uuid())
+  userId                String
+  storeId               String
+  user                  User      @relation("UserToStore", fields: [userId], references: [id], onDelete: Cascade)
+  store                 Store     @relation("UserToStore", fields: [storeId], references: [id])
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([storeId])
+}
+
+model Store {
+  id                    String  @id @default(uuid())
+  myUserId              String
+  name                  String
+  billboards            Billboard[] @relation("StoreToBillboard")
+  categories            Category[] @relation("StoreToCategory")
+  sizes                 Size[]     @relation("StoreToSize")
+  colors                Color[]     @relation("StoreToColor")
+  products              Product[]  @relation("StoreToProduct")
+  orders                Order[]     @relation("StoreToOrder")
+  users                 StoreUser[] @relation("UserToStore")
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model Account {
+  id                    String  @id @default(cuid())
+  myUserId              String?
+  userId                String?
+  type                  String
+  provider              String
+  providerAccountId     String
+  refresh_token         String?  @db.Text
+  access_token          String?  @db.Text
+  expires_at            Int?
+  token_type            String?
+  scope                 String?
+  id_token              String?  @db.Text
+  session_state         String?
+
+  myUser                MyUser? @relation(fields: [myUserId], references: [id], onDelete: Cascade)
+  user                  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
 
   @@unique([provider, providerAccountId])
 }
 
 model VerificationToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
-  expires DateTime
+  id                    String @id @default(cuid())
+  email                 String
+  token                 String @unique
+  expires               DateTime
 
   @@unique([email, token])
 }
 
 model PasswordResetToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
-  expires DateTime
+  id                    String @id @default(cuid())
+  email                 String
+  token                 String @unique
+  expires               DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
-  expires DateTime
+  id                    String @id @default(cuid())
+  email                 String
+  token                 String @unique
+  expires               DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorConfirmation {
-  id String @id @default(cuid())
+  id                    String @id @default(cuid())
+  myUserId              String? @unique
+  userId                String? @unique // Add @unique attribute to ensure uniqueness
 
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  myUser                MyUser? @relation(fields: [myUserId], references: [id], onDelete: Cascade)
+  user                  User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([userId])
+}
+
+model Billboard {
+  id                    String      @id @default(uuid())
+  storeId               String
+  store                 Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
+  label                 String
+  imageUrl              String
+  categories            Category[]
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt()
+
+  @@index([storeId])
+}
+
+model Image {
+  id                    String   @id @default(uuid())
+  productId             String   // Foreign Key to Product
+  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url                   String   // URL of the image
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([productId])
+}
+
+model Category {
+  id                    String      @id @default(uuid())
+  storeId               String      // Foreign Key to Store
+  store                 Store       @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboardId           String?      // Foreign Key to Billboard
+  billboard             Billboard?   @relation(fields: [billboardId], references: [id])
+  products              Product[]   @relation("CategoryToProduct")
+  name                  String
+  imageUrl              String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([storeId])
+  @@index([billboardId])
+}
+
+model Color {
+  id                    String      @id @default(uuid())
+  storeId               String      // Foreign Key to Store
+  store                 Store       @relation("StoreToColor", fields: [storeId], references: [id])
+  name                  String
+  value                 String
+  products              Product[]   // Relation to Product model
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([storeId])
+}
+
+model Review {
+  id                    String    @id @default(uuid())
+  storeId               String    @default("")
+  text                  String
+  rating                Float       // You can use a numeric value to represent the rating (e.g., 1 to 5 stars)
+  hasReply              Boolean   @default(false)
+  reply                 String?
+  replyAt               DateTime?
+  user                  User      @relation("UserToReview", fields: [userId], references: [id], onDelete: Cascade)
+  userId                String    // Foreign Key to the User model, representing the user who wrote the review
+  product               Product   @relation(fields: [productId], references: [id])
+  isArchived            Boolean   @default(false)
+  productId             String    // Foreign Key to the Product model, representing the reviewed product
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([productId])
+}
+
+model Size {
+  id                    String            @id @default(uuid())
+  storeId               String            // Foreign Key to Store
+  store                 Store             @relation("StoreToSize", fields: [storeId], references: [id])
+  quantity              Int         
+  name                  String
+  productSizes          ProductSize[]     
+  orderItems            OrderItem[]       @relation("OrderItemToSize")
+  value                 String
+  productId             String
+  products              Product           @relation("ProductToSize", fields: [productId], references: [id], onDelete: Cascade)
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([storeId])
+  @@index([productId])
+}
+
+model ProductSize {
+  productId             String
+  product               Product     @relation(fields: [productId], references: [id])
+  sizeId                String
+  size                  Size        @relation(fields: [sizeId], references: [id])
+  quantity              Int
+  @@unique([productId, sizeId])
+  @@index([productId])
+  @@index([sizeId])
+}
+
+model Product {
+  id                    String          @id @default(uuid())
+  number                Int             @default(autoincrement())
+  salesCount            Int             @default(0)
+  storeId               String          // Foreign Key to Store
+  store                 Store           @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId            String          // Foreign Key to Category
+  category              Category        @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name                  String
+  productSizes          ProductSize[]
+  description           String          @db.VarChar(500)
+  details               String?          @db.VarChar(1000)
+  price                 Int
+  wishlistItems         WishlistItem[]
+  isNew                 Boolean         @default(false)
+  isFeatured            Boolean         @default(false)
+  isArchived            Boolean         @default(false)
+  reviews               Review[]        @relation // Establishing the relationship with the Review model
+  sizeId                String?         // Foreign Key to Size
+  discountPercentage    Float?          @default(0)
+  discountAbsolute      Int?            @default(0)
+  discountStartDate     DateTime?       
+  discountEndDate       DateTime?
+  sizes                 Size[]          @relation("ProductToSize")
+  colorId               String          // Foreign Key to Color
+  stock                 Int             @default(0)
+  averageRating         Float?          @default(0)
+  totalReviews          Int             @default(0)
+  color                 Color?          @relation(fields: [colorId], references: [id])
+  images                Image[]         // Relation to Image model
+  orderItems            OrderItem[]     // Relation to Order model
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
+
+  @@index([storeId])
+  @@index([categoryId])
+  @@index([sizeId])
+  @@index([colorId])
+}
+
+// Alternativa para disconto criando modelo próprio
+//model Discount {
+//  id            String    @id @default(uuid())
+//  productId     String
+//  product       Product   @relation(fields: [productId], references: [id])
+//  percentage    Float?
+//  absolute      Decimal?
+//  startDate     DateTime?
+//  endDate       DateTime?
+//}
+
+// Modelo para criação de vários tipos de promoção que vão além de apenas redução no preço
+//model Offer {
+//  id          String     @id @default(uuid())
+//  name        String
+//  description String
+//  startDate   DateTime
+//  endDate     DateTime
+//  products    Product[]  @relation("OfferToProduct")
+//}
+
+
+
+model Order {
+  id                    String    @id @default(uuid())
+  number                Int       @default(autoincrement())      
+  storeId               String    // Foreign Key to Store
+  store                 Store     @relation("StoreToOrder", fields: [storeId], references: [id])
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id])
+  orderItems            OrderItem[] // Relation to OrderItem model
+  isPaid                Boolean   @default(false)
+  shippingMethod        ShippingMethod? @relation("ShippingMethodToOrder", fields: [shippingMethodId], references: [id])
+  shippingMethodId      String?      // Foreign Key to ShippingMethod model, representing the selected shipping method
+  phone                 String    @default("")
+  address               String    @default("")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([storeId])
+  @@index([userId])
+  @@index([shippingMethodId])
+}
+
+model OrderItem {
+  id                    String      @id @default(uuid())
+  orderId               String      // Foreign Key to Order
+  order                 Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId             String      // Foreign Key to Product
+  product               Product     @relation(fields: [productId], references: [id])
+  sizeIds               String
+  size                  Size[]      @relation("OrderItemToSize")
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model ShippingMethod {
+  id                    String    @id @default(uuid())
+  name                  String
+  estimatedTime         String    // Estimated delivery time for this shipping method
+  shippingCost          Float     // The cost of shipping for this method
+  orders                Order[]   @relation("ShippingMethodToOrder")
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([name])
+}
+
+model Wishlist {
+  id                    String      @id @default(uuid())
+  name                  String
+  user                  User        @relation(fields: [userId], references: [id])
+  userId                String      // Foreign Key to the User model, representing the user who owns the wishlist
+  items                 WishlistItem[] // Relation to WishlistItem model
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([userId])
+}
+
+model WishlistItem {
+  id                    String      @id @default(uuid())
+  wishlist              Wishlist    @relation(fields: [wishlistId], references: [id])
+  wishlistId            String      // Foreign Key to the Wishlist model, representing the wishlist that contains this item
+  product               Product     @relation(fields: [productId], references: [id])
+  productId             String      // Foreign Key to the Product model, representing the item added to the wishlist
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([wishlistId])
+  @@index([productId])
 }

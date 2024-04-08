@@ -1,14 +1,41 @@
 import * as z from "zod";
-import { UserRole } from "@prisma/client";
 
-export const SettingsSchema = z
+export const SettingsSchema = z.object({
+  storeName: z.string().min(1, {
+    message: "É necessário informar um nome",
+  }),
+  imageUrl: z.optional(z.string()),
+  isTwoFactorEnabled: z.optional(z.boolean()),
+  myUserName: z.string().min(1, {
+    message: "É necessário informar um nome",
+  }),
+  email: z.string().email().optional(),
+  password: z
+    .string()
+    .min(6, {
+      message: "É necessário informar pelo menos 6 caracteres",
+    })
+    .optional(),
+  newPassword: z.optional(
+    z.string().min(6, {
+      message: "É necessário informar pelo menos 6 caracteres",
+    })
+  ),
+});
+
+export const UpdatePasswordSchema = z
   .object({
-    name: z.optional(z.string()),
-    isTwoFactorEnabled: z.optional(z.boolean()),
-    role: z.enum([UserRole.ADMIN, UserRole.USER]),
-    email: z.optional(z.string().email()),
-    password: z.optional(z.string().min(6)),
-    newPassword: z.optional(z.string().min(6)),
+    password: z
+      .string()
+      .min(6, {
+        message: "É necessário informar pelo menos 6 caracteres",
+      })
+      .optional(),
+    newPassword: z.optional(
+      z.string().min(6, {
+        message: "É necessário informar pelo menos 6 caracteres",
+      })
+    ),
   })
   .refine(
     (data) => {
@@ -69,4 +96,91 @@ export const RegisterSchema = z.object({
   name: z.string().min(1, {
     message: "É necessário informar um nome",
   }),
+});
+
+export const CreateStoreSchema = z.object({
+  name: z.string().min(1, {
+    message: "É necessário informar ao menos 1 letra",
+  }),
+});
+
+export const CreateBillboardSchema = z.object({
+  label: z.string().min(1, {
+    message: "É necessário informar ao menos 1 letra",
+  }),
+  imageUrl: z.string().min(1, {
+    message: "É necessário inserir uma imagem",
+  }),
+});
+
+export const UploadImage = z.object({
+  label: z.string().min(1),
+  imageUrl: z.string().min(1),
+});
+
+export const CategorySchema = z.object({
+  name: z.string().min(1, {
+    message: "É necessário informar ao menos 1 letra",
+  }),
+  billboardId: z.string().optional().nullable(),
+  imageUrl: z.string().optional().nullable(),
+});
+
+export const ColorSchema = z.object({
+  name: z.string().min(2),
+  value: z.string().min(4).max(9).regex(/^#/, {
+    message: "Esse campo precisa ser um código hex",
+  }),
+});
+
+export const ProductSchema = z.object({
+  name: z.string().min(1, {
+    message: "É necessário informar ao menos 1 letra",
+  }),
+  description: z.string().min(1, {
+    message: "É necessário informar ao menos 1 letra",
+  }),
+  images: z.object({ url: z.string() }).array(),
+  sizes: z
+    .object({
+      name: z.string().min(1, {
+        message: "É necessário informar ao menos 1 caracter",
+      }),
+      value: z.string().min(1, {
+        message: "É necessário informar ao menos 1 caracter",
+      }),
+      quantity: z.coerce.number().min(0, {
+        message: "É necessário informar um número",
+      }),
+    })
+    .array(),
+  price: z
+    .string()
+    .regex(
+      /^\d+,\d{2}$/,
+      "Siga o seguinte formato: '00,00'. Insira apenas números"
+    ),
+
+  priceInCents: z.coerce.number().optional(),
+  categoryId: z.string().min(1, {
+    message: "Selecione uma categoria",
+  }),
+  colorId: z
+    .string()
+    .min(1, {
+      message: "Selecione uma cor",
+    })
+    .optional(),
+  isFeatured: z.boolean().default(false).optional(),
+  isArchived: z.boolean().default(false).optional(),
+  isNew: z.boolean().default(false).optional(),
+});
+
+export const ReviewSchema = z.object({
+  reply: z
+    .string()
+    .min(1, {
+      message: "É necessário informar ao menos 1 letra",
+    })
+    .nullable(),
 });
