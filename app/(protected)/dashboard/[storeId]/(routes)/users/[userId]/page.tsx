@@ -1,7 +1,7 @@
 const UserPage = () => {
   return (
-    <div>
-      <p>user page</p>
+    <div className="flex justify-center items-center h-full">
+      <p>work in progress...</p>
     </div>
   );
 };
