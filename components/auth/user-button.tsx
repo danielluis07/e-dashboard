@@ -1,16 +1,5 @@
 "use client";
 
-import { FaUser } from "react-icons/fa";
-import { ExitIcon } from "@radix-ui/react-icons";
-
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { LogoutButton } from "@/components/auth/logout-button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import placeholder from "@/public/placeholder-logo.jpg";
