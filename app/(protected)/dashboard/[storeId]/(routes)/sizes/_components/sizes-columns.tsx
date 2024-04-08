@@ -1,7 +1,6 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { SizesCellAction } from "./sizes-cell-action";
 
 export type SizesColumnProps = {
   sum: number | null;
@@ -21,9 +20,5 @@ export const columns: ColumnDef<SizesColumnProps>[] = [
   {
     accessorKey: "sum",
     header: "Total",
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => <SizesCellAction data={row.original} />,
   },
 ];
