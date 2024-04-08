@@ -17,14 +17,8 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { startTransition, useState, useTransition } from "react";
-import axios from "axios";
 import { CreateStoreSchema } from "@/schemas";
 import { createStore } from "@/actions/create-store";
-import { LogoutButton } from "../auth/logout-button";
-
-const formSchema = z.object({
-  name: z.string().min(1),
-});
 
 const StoreModal = () => {
   const storeModal = useStoreModal();
