@@ -48,7 +48,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-full md:min-h-screen bg-milky">
+    <div className="inline-block min-h-full xm:flex">
       <Sidebar name={myUser?.name} stores={stores} imageUrl={user.image} />
       <div className="flex-1 md:ml-3">
         <div className="xl:hidden">

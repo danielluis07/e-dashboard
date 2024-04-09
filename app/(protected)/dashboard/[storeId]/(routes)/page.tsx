@@ -26,8 +26,6 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
   const stockCount = await getStockCount(params.storeId);
   const usersCount = await getUsersCount(params.storeId);
 
-  console.log(graphRevenue, "graph revenue");
-
   return (
     <div className="h-full md:h-screen md:overflow-auto">
       <div className="flex-1 space-y-4 p-8 pt-6">

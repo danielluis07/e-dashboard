@@ -22,9 +22,9 @@ export const SizesClient = ({ data }: SizesClientProps) => {
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API dos Tamanhos" />
-      <Separator />
-      <ApiList entityName="sizes" entityIdName="sizeId" />
+      {/* <Heading title="API" description="API dos Tamanhos" />
+      <Separator /> */}
+      {/* <ApiList entityName="sizes" entityIdName="sizeId" /> */}
     </>
   );
 };

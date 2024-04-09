@@ -19,6 +19,7 @@ const config = {
     },
     extend: {
       screens: {
+        xm: "400px",
         sl: "1600px",
         "md-max": { max: "1280px" },
       },

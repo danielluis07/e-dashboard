@@ -76,9 +76,9 @@ export const CategoriesClient = ({ data }: CategoriesClientProps) => {
       </div>
       <Separator />
       <DataTable columns={columns} data={data} searchKey="name" />
-      <Heading title="API" description="API das Categorias" />
-      <Separator />
-      <ApiList entityIdName="categoryId" entityName="categories" />
+      {/* <Heading title="API" description="API das Categorias" />
+      <Separator /> */}
+      {/* <ApiList entityIdName="categoryId" entityName="categories" /> */}
     </>
   );
 };

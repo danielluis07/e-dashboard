@@ -218,9 +218,9 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
         <div className="w-[355px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
           <DataTable searchKey="name" columns={columns} data={filteredData} />
         </div>
-        <Heading title="API" description="API dos Produtos" />
-        <Separator />
-        <ApiList entityName="products" entityIdName="productId" />
+        {/* <Heading title="API" description="API dos Produtos" />
+        <Separator /> */}
+        {/* <ApiList entityName="products" entityIdName="productId" /> */}
       </div>
     </>
   );

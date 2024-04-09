@@ -76,9 +76,9 @@ export const BillboardClient = ({ data }: BillboardClientProps) => {
       </div>
       <Separator />
       <DataTable columns={columns} data={data} searchKey="label" />
-      <Heading title="API" description="API dos Banners" />
-      <Separator />
-      <ApiList entityIdName="billboardId" entityName="billboards" />
+      {/* <Heading title="API" description="API dos Banners" />
+      <Separator /> */}
+      {/* <ApiList entityIdName="billboardId" entityName="billboards" /> */}
     </>
   );
 };

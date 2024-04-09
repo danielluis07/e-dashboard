@@ -75,9 +75,9 @@ export const ColorsClient = ({ data }: ColorsClientProps) => {
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />
-      <Heading title="API" description="API das Cores" />
-      <Separator />
-      <ApiList entityName="colors" entityIdName="colorId" />
+      {/* <Heading title="API" description="API das Cores" />
+      <Separator /> */}
+      {/* <ApiList entityName="colors" entityIdName="colorId" /> */}
     </>
   );
 };
