@@ -136,6 +136,7 @@ model Billboard {
   storeId               String
   store                 Store       @relation("StoreToBillboard", fields: [storeId], references: [id])
   label                 String
+  description           String?
   imageUrl              String
   categories            Category[]
   createdAt             DateTime    @default(now())

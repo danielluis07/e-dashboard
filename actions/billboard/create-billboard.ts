@@ -26,7 +26,7 @@ export const createBillboard = async (
     return { error: "Campos inválidos!" };
   }
 
-  const { label, imageUrl } = validatedFields.data;
+  const { label, imageUrl, description } = validatedFields.data;
 
   if (!label) {
     return { error: "É necessário informar um título" };
@@ -51,6 +51,7 @@ export const createBillboard = async (
       data: {
         label,
         imageUrl,
+        description,
         storeId: params.storeId,
       },
     });

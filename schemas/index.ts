@@ -111,6 +111,13 @@ export const CreateBillboardSchema = z.object({
   imageUrl: z.string().min(1, {
     message: "É necessário inserir uma imagem",
   }),
+  description: z
+    .optional(
+      z.string().max(50, {
+        message: "No máximo 50 caracteres",
+      })
+    )
+    .nullable(),
 });
 
 export const UploadImage = z.object({

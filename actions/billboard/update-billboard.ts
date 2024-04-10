@@ -29,7 +29,7 @@ export const updateBillboard = async (
     return { error: "Campos inválidos!" };
   }
 
-  const { label, imageUrl } = validatedFields.data;
+  const { label, imageUrl, description } = validatedFields.data;
 
   if (!label) {
     return { error: "É necessário informar um título" };
@@ -58,6 +58,7 @@ export const updateBillboard = async (
       data: {
         label,
         imageUrl,
+        description,
       },
     });
   } catch (error) {

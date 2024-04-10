@@ -32,7 +32,7 @@ interface EditBillboardFormProps {
   initialData?: Billboard | null;
 }
 
-type BillboardFormValues = z.infer<typeof UploadImage>;
+type BillboardFormValues = z.infer<typeof CreateBillboardSchema>;
 
 export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
   const params = useParams<{ storeId: string; billboardId: string }>();
@@ -42,15 +42,17 @@ export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
   const [error, setError] = useState<string | undefined>("");
   const [loading, setLoading] = useState(false);
   const form = useForm<BillboardFormValues>({
-    resolver: zodResolver(UploadImage),
+    resolver: zodResolver(CreateBillboardSchema),
     defaultValues: initialData || {
       label: "",
       imageUrl: "",
+      description: "",
     },
   });
 
   const onSubmit = (values: z.infer<typeof CreateBillboardSchema>) => {
-    startTransition(() => {
+    console.log(values, "values");
+    /* startTransition(() => {
       updateBillboard(values, params).then((data) => {
         if (data.error) {
           toast(data.error, {
@@ -65,7 +67,7 @@ export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
           router.push(`/dashboard/${params.storeId}/billboards`);
         }
       });
-    });
+    }); */
   };
 
   const onDelete = () => {
@@ -143,6 +145,24 @@ export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
                       disabled={loading}
                       placeholder="Nome do banner"
                       {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Descrição</FormLabel>
+                  <FormControl>
+                    <Input
+                      disabled={loading}
+                      placeholder="Insira uma breve descrição"
+                      {...field}
+                      value={field.value ?? ""}
                     />
                   </FormControl>
                   <FormMessage />

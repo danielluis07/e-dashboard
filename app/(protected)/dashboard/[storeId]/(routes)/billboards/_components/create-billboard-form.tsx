@@ -1,11 +1,9 @@
 "use client";
 
 import * as z from "zod";
-import { Billboard } from "@prisma/client";
-import { CiTrash } from "react-icons/ci";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Heading } from "@/components/ui/heading";
@@ -21,29 +19,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useParams, useRouter } from "next/navigation";
-import { AlertModal } from "@/components/modals/alert-modal";
 import { ImageUpload } from "@/components/image-upload";
 import { CreateBillboardSchema, UploadImage } from "@/schemas";
 import { createBillboard } from "@/actions/billboard/create-billboard";
 import { IoIosAlert } from "react-icons/io";
 
-interface CreateBillboardFormProps {
-  initialData?: Billboard | null;
-}
+type BillboardFormValues = z.infer<typeof CreateBillboardSchema>;
 
-type BillboardFormValues = z.infer<typeof UploadImage>;
-
-export const CreateBillboardForm = ({
-  initialData,
-}: CreateBillboardFormProps) => {
+export const CreateBillboardForm = () => {
   const params = useParams<{ storeId: string }>();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const form = useForm<BillboardFormValues>({
-    resolver: zodResolver(UploadImage),
-    defaultValues: initialData || {
+    resolver: zodResolver(CreateBillboardSchema),
+    defaultValues: {
       label: "",
       imageUrl: "",
+      description: "",
     },
   });
 
@@ -107,6 +99,24 @@ export const CreateBillboardForm = ({
                         disabled={isPending}
                         placeholder="Nome do banner"
                         {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isPending}
+                        placeholder="Insira uma breve descrição"
+                        {...field}
+                        value={field.value ?? ""}
                       />
                     </FormControl>
                     <FormMessage />
