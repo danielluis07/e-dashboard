@@ -22,7 +22,7 @@ const ColorsPage = async ({ params }: { params: { storeId: string } }) => {
   }));
 
   return (
-    <div className="h-full md:h-screen md:overflow-auto p-3">
+    <div className="h-full xl:overflow-auto p-3 pt-16 xl:pt-0">
       <ColorsClient data={formattedColors} />
     </div>
   );

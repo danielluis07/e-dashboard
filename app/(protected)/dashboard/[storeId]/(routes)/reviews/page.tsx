@@ -53,12 +53,12 @@ const ReviewsPage = async ({ params }: { params: { storeId: string } }) => {
   }));
 
   return (
-    <div className="h-full md:h-screen md:overflow-auto p-3">
+    <div className="h-full xl:overflow-auto p-3 pt-16 xl:pt-0">
       <Heading
         title="Todos as Avaliações"
         description="Gerencie as avaliações de sua loja"
       />
-      <div className="flex gap-x-3 mt-10">
+      <div className="flex-col space-y-3 sm:flex-row sm:space-x-3 mt-10">
         <Card className="w-full p-5 space-y-4">
           <div>Total</div>
           <div className="text-4xl">{reviews.length}</div>

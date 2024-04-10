@@ -27,8 +27,8 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
   const usersCount = await getUsersCount(params.storeId);
 
   return (
-    <div className="h-full md:h-screen md:overflow-auto">
-      <div className="flex-1 space-y-4 p-8 pt-6">
+    <div className="h-full xl:h-screen xl:overflow-auto pl-3 pb-3 pr-3 pt-16">
+      <div className="space-y-4 p-8 pt-6">
         <Heading title="Dashboard" description="Resumo das vendas" />
         <Separator />
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 cursor-default">

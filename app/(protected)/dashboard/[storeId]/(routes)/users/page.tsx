@@ -29,7 +29,7 @@ const UsersPage = async ({ params }: { params: { storeId: string } }) => {
   }));
 
   return (
-    <div className="h-full md:h-screen md:overflow-auto sl:cursor-pointer">
+    <div className="h-full xl:overflow-auto p-3 pt-16 xl:pt-0">
       <div className="mt-8">
         <UsersClient data={formattedUsers} />
       </div>

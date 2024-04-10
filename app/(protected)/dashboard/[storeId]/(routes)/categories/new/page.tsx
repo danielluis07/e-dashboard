@@ -9,7 +9,7 @@ const NewCategoryPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
   return (
-    <div className="h-full mt-10 xl:mt-0 xl:flex items-center justify-center">
+    <div className="h-full xl:flex items-center justify-center mt-14 xl:mt-0">
       <FormWrapper>
         <CreateCategoryForm billboards={billboards} />
       </FormWrapper>

@@ -48,11 +48,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="inline-block min-h-full xm:flex">
+    <div className="flex min-h-full">
       <Sidebar name={myUser?.name} stores={stores} imageUrl={user.image} />
       <div className="flex-1 md:ml-3">
         <div className="xl:hidden">
-          <Navbar name={myUser?.name} stores={stores} imageUrl={user.image} />
+          <Navbar stores={stores} imageUrl={user.image} />
         </div>
         {children}
       </div>

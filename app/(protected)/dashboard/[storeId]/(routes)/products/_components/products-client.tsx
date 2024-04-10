@@ -132,7 +132,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
           </div>
         </div>
         <Separator className="my-8" />
-        <div className="w-[355px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto grid gap-1 grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">
+        <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto grid gap-1 grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">
           <div className="flex items-center space-x-2">
             <Input
               id="watches"
@@ -215,7 +215,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
             <Label htmlFor="isFeatured">Destaques</Label>
           </div>
         </div>
-        <div className="w-[355px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
+        <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
           <DataTable searchKey="name" columns={columns} data={filteredData} />
         </div>
         {/* <Heading title="API" description="API dos Produtos" />

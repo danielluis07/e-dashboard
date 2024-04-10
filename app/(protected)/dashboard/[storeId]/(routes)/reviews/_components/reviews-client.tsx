@@ -126,7 +126,9 @@ export const ReviewsClient = ({ data }: ReviewsClientProps) => {
           <Label htmlFor="isFeatured">Destaques</Label>
         </div>
       </div> */}
-      <DataTable searchKey="user" columns={columns} data={data} />
+      <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
+        <DataTable searchKey="user" columns={columns} data={data} />
+      </div>
       {/* <Heading title="API" description="API dos Produtos" />
       <Separator /> */}
       {/* <ApiList entityName="products" entityIdName="productId" /> */}
