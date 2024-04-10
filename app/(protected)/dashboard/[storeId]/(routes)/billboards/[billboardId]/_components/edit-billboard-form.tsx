@@ -51,8 +51,7 @@ export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
   });
 
   const onSubmit = (values: z.infer<typeof CreateBillboardSchema>) => {
-    console.log(values, "values");
-    /* startTransition(() => {
+    startTransition(() => {
       updateBillboard(values, params).then((data) => {
         if (data.error) {
           toast(data.error, {
@@ -67,7 +66,7 @@ export const EditBillboardForm = ({ initialData }: EditBillboardFormProps) => {
           router.push(`/dashboard/${params.storeId}/billboards`);
         }
       });
-    }); */
+    });
   };
 
   const onDelete = () => {
