@@ -94,7 +94,7 @@ export const MainNav = ({ isOpen }: MainNavProps) => {
           </div>
         </Link>
       </div>
-      <div className="flex flex-col gap-y-4 h-64 sl:h-full custom-scrollbar overflow-auto">
+      <div className="flex flex-col gap-y-4 h-72 sl:h-full custom-scrollbar overflow-auto">
         {routes.map((route) => (
           <Link key={route.href} href={route.href}>
             <div

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { db } from "@/lib/db";
 import { formatter } from "@/lib/utils";
+import { convertCentsToReal } from "@/lib/utils";
 import ptBR from "date-fns/locale/pt-BR";
 import { OrdersColumnsProps } from "./_components/orders-columns";
 import { OrderClient } from "./_components/orders-client";
@@ -34,11 +35,12 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     products: item.orderItems
       .map((orderItem) => orderItem.product.name)
       .join(", "),
-    totalPrice: formatter.format(
+    totalPrice: convertCentsToReal(
       item.orderItems.reduce((total, item) => {
         return total + Number(item.product.price);
       }, 0)
     ),
+
     isPaid: item.isPaid,
     createdAt: format(item.createdAt, "dd/MM/yyyy", { locale: ptBR }),
   }));
