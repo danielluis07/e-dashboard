@@ -30,7 +30,7 @@ const ProductPage = async ({
   });
 
   return (
-    <div className="h-full xl:h-screen xl:overflow-auto">
+    <div className="h-full xl:overflow-auto">
       <FormWrapper>
         <EditProductForm
           categories={categories}

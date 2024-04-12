@@ -212,7 +212,7 @@ model Size {
   quantity              Int         
   name                  String
   productSizes          ProductSize[]     
-  orderItems            OrderItem[]       @relation("OrderItemToSize")
+  orderItems            OrderItem[]
   value                 String
   productId             String
   products              Product           @relation("ProductToSize", fields: [productId], references: [id], onDelete: Cascade)
@@ -324,11 +324,12 @@ model OrderItem {
   order                 Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId             String      // Foreign Key to Product
   product               Product     @relation(fields: [productId], references: [id])
-  sizeIds               String
-  size                  Size[]      @relation("OrderItemToSize")
+  sizeId                String
+  size                  Size        @relation(fields: [sizeId], references: [id])
 
   @@index([orderId])
   @@index([productId])
+  @@index([sizeId])
 }
 
 model ShippingMethod {

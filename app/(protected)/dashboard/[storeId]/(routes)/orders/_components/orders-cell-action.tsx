@@ -34,8 +34,6 @@ export const OrdersCellAction = ({ data }: OrdersCellActionProps) => {
     toast.success("Id copiada!");
   };
 
-  const onClick = () => {};
-
   const onDelete = () => {
     startTransition(() => {
       deleteOrder(params.storeId, data.id).then((data) => {
@@ -76,7 +74,10 @@ export const OrdersCellAction = ({ data }: OrdersCellActionProps) => {
             <CiTrash className="mr-2 size-5" />
             Deletar
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onClick}>
+          <DropdownMenuItem
+            onClick={() =>
+              router.push(`/dashboard/${params.storeId}/orders/${data.id}`)
+            }>
             <AiOutlineFileSearch className="mr-2 size-5" />
             Ver detalhes
           </DropdownMenuItem>

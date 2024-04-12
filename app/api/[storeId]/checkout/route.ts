@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
+import { Product } from "@prisma/client";
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
@@ -18,38 +19,33 @@ export async function POST(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
-  const { productIds, sizeIds, userId } = await req.json();
+  // Assuming the body now contains products with sizeIds
+  const { products, userId } = await req.json();
 
   if (!userId) {
     return new NextResponse("UserId is required", { status: 400 });
   }
 
-  if (!productIds || productIds.length === 0) {
-    return new NextResponse("Product ids are required", { status: 400 });
+  if (!products || products.length === 0) {
+    return new NextResponse("Product information is required", { status: 400 });
   }
 
-  const user = await db.user.findUnique({
-    where: {
-      id: userId,
-    },
-  });
-
+  const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) {
     return new NextResponse("User not found", { status: 400 });
   }
 
-  const products = await db.product.findMany({
+  // Query for products based on provided IDs
+  const productDetails = await db.product.findMany({
     where: {
       id: {
-        in: productIds,
+        in: products.map((product: any) => product.productId),
       },
     },
   });
 
-  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
-
-  products.forEach((product) => {
-    line_items.push({
+  const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
+    productDetails.map((product) => ({
       quantity: 1,
       price_data: {
         currency: "BRL",
@@ -58,18 +54,18 @@ export async function POST(
         },
         unit_amount: product.price,
       },
-    });
-  });
+    }));
 
+  // Create the order with order items including product and size
   const order = await db.order.create({
     data: {
       storeId: params.storeId,
       userId: userId,
       isPaid: true,
       orderItems: {
-        create: productIds.map((productId: string, index: string) => ({
-          productId: productId,
-          sizeIds: sizeIds[index],
+        create: products.map((product: any) => ({
+          productId: product.productId,
+          sizeId: product.sizeId, // Ensuring each order item has the correct size
         })),
       },
     },
