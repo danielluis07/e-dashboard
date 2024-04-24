@@ -29,7 +29,7 @@ export const updateCategory = async (
     return { error: "Campos inválidos!" };
   }
 
-  const { name, billboardId } = validatedFields.data;
+  const { name, billboardId, imageUrl, value } = validatedFields.data;
 
   if (!name) {
     return { error: "É necessário informar um nome" };
@@ -37,6 +37,10 @@ export const updateCategory = async (
 
   if (!billboardId) {
     return { error: "É necessário informar o Id do banner" };
+  }
+
+  if (!value) {
+    return { error: "É necessário informar um valor" };
   }
 
   try {
@@ -57,6 +61,8 @@ export const updateCategory = async (
       },
       data: {
         name,
+        imageUrl,
+        value,
         billboardId,
       },
     });

@@ -68,7 +68,7 @@ export const createProduct = async (
     return { error: "É necessário informar uma categoria" };
   }
 
-  if (!colorId) {
+  if (colorId === "") {
     return { error: "É necessário informar uma cor" };
   }
 
@@ -114,7 +114,7 @@ export const createProduct = async (
         isArchived,
         isNew,
         categoryId,
-        colorId,
+        colorId: colorId !== "none" ? colorId : null,
         storeId: params.storeId,
         stock: totalQuantity,
         sizes: {
@@ -159,7 +159,7 @@ export const createProduct = async (
     arr.push(productsWithSummedSizes);
   } catch (error) {
     console.log(error);
-    return { error: "Erro ao criar o produto cor" };
+    return { error: "Erro ao criar o produto" };
   }
 
   revalidatePath(`/dashboard/${params.storeId}/products`);

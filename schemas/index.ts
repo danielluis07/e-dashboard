@@ -131,6 +131,7 @@ export const CategorySchema = z.object({
   }),
   billboardId: z.string().optional().nullable(),
   imageUrl: z.string().optional().nullable(),
+  value: z.string().optional().nullable(),
 });
 
 export const ColorSchema = z.object({
@@ -150,34 +151,17 @@ export const ProductSchema = z.object({
   images: z.object({ url: z.string() }).array(),
   sizes: z
     .object({
-      name: z.string().min(1, {
-        message: "É necessário informar ao menos 1 caracter",
-      }),
-      value: z.string().min(1, {
-        message: "É necessário informar ao menos 1 caracter",
-      }),
-      quantity: z.coerce.number().min(0, {
-        message: "É necessário informar um número",
-      }),
+      name: z.string(),
+      value: z.string(),
+      quantity: z.coerce.number(),
     })
     .array(),
-  price: z
-    .string()
-    .regex(
-      /^\d+,\d{2}$/,
-      "Siga o seguinte formato: '00,00'. Insira apenas números"
-    ),
-
+  price: z.string(),
   priceInCents: z.coerce.number().optional(),
   categoryId: z.string().min(1, {
     message: "Selecione uma categoria",
   }),
-  colorId: z
-    .string()
-    .min(1, {
-      message: "Selecione uma cor",
-    })
-    .optional(),
+  colorId: z.string().optional().nullable(),
   isFeatured: z.boolean().default(false).optional(),
   isArchived: z.boolean().default(false).optional(),
   isNew: z.boolean().default(false).optional(),

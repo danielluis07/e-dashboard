@@ -5,6 +5,7 @@ import { ProductsCellAction } from "./products-cell-action";
 import { LuArrowUpDown } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
 export type ProductColumnProps = {
   id: string;
@@ -121,7 +122,10 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       <div className="flex items-center gap-x-2">
         {row.original.color}
         <div
-          className="h-6 w-6 rounded-full border"
+          className={cn(
+            row.original.color === "---" && "hidden",
+            "h-6 w-6 rounded-full border"
+          )}
           style={{ backgroundColor: row.original.color }}
         />
       </div>

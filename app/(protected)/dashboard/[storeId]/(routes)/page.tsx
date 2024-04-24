@@ -11,7 +11,10 @@ import { getSalesCount } from "@/actions/get-sales-count";
 import { getGraphRevenue } from "@/actions/get-graph-revenue";
 import { getStockCount } from "@/actions/get-stock-count";
 import { getUsersCount } from "@/actions/get-users-count";
-import { formatter } from "@/lib/utils";
+import { convertCentsToReal } from "@/lib/utils";
+import { ClipLoader } from "react-spinners";
+import { BounceLoader } from "react-spinners";
+import { LoaderSpinner } from "@/components/loader-spinner";
 
 interface DashboardPageProps {
   params: {
@@ -41,7 +44,7 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold group-hover:text-milky">
-                {formatter.format(totalRevenue)}
+                {convertCentsToReal(totalRevenue)}
               </div>
             </CardContent>
           </Card>

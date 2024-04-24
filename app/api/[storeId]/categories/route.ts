@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-
 import { db } from "@/lib/db";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
 export async function GET(
   req: NextRequest,
@@ -17,7 +22,7 @@ export async function GET(
       },
     });
 
-    return NextResponse.json(categories);
+    return NextResponse.json(categories, { headers: corsHeaders });
   } catch (error) {
     console.log("[CATEGORIES_GET]", error);
     return new NextResponse("Internal error", { status: 500 });

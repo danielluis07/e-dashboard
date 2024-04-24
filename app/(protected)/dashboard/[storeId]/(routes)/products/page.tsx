@@ -33,12 +33,12 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     price: convertCentsToReal(item.price),
     category: item.category.name,
     sizes: item.sizes,
-    color: item.color?.value,
+    color: item.color?.value ?? "---",
     createdAt: format(item.createdAt, "dd/MM/yyyy", { locale: ptBR }),
   }));
 
   return (
-    <div className="h-full xl:overflow-auto p-3 pt-16 xl:pt-0">
+    <div className="h-full xl:h-screen xl:overflow-auto p-3 pt-16 xl:pt-0">
       <ProductsClient data={formattedProducts} />
     </div>
   );

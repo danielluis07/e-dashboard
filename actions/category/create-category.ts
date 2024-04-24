@@ -26,12 +26,16 @@ export const createCategory = async (
     return { error: "Campos inválidos!" };
   }
 
-  const { name, billboardId, imageUrl } = validatedFields.data;
+  const { name, billboardId, imageUrl, value } = validatedFields.data;
 
   let billboard = !billboardId ? null : billboardId;
 
   if (!name) {
     return { error: "É necessário informar um nome" };
+  }
+
+  if (!value) {
+    return { error: "É necessário informar um valor" };
   }
 
   const categories = await db.category.findMany({
@@ -50,6 +54,7 @@ export const createCategory = async (
         name,
         billboardId: billboard,
         imageUrl,
+        value,
         storeId: params.storeId,
       },
     });

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DataTable } from "@/components/ui/data-table";
 import { ApiList } from "@/components/ui/api-list";
+import { ReviewsDataTable } from "./reviews-table";
 
 interface ReviewsClientProps {
   data: ReviewColumnProps[];
@@ -34,23 +35,7 @@ export const ReviewsClient = ({ data }: ReviewsClientProps) => {
         onConfirm={onDelete}
         loading={isPending}
       />
-      <div className="flex items-center justify-end mt-8">
-        <div className="flex flex-col md:flex-row gap-x-4 gap-y-2">
-          <Button
-            variant="destructive"
-            onClick={() => setOpen(true)}
-            disabled={data.length < 1}>
-            <CiTrash className="mr-2 size-4" />
-            Deletar Todos
-          </Button>
-          <Button
-            onClick={() =>
-              router.push(`/dashboard/${params.storeId}/products/new`)
-            }>
-            <CiCirclePlus className="mr-2 size-5" /> Adicionar
-          </Button>
-        </div>
-      </div>
+
       {/*       <Separator />
       <div className="flex justify-end space-x-4">
         <div className="flex items-center space-x-2">
@@ -127,7 +112,7 @@ export const ReviewsClient = ({ data }: ReviewsClientProps) => {
         </div>
       </div> */}
       <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
-        <DataTable searchKey="user" columns={columns} data={data} />
+        <ReviewsDataTable searchKey="user" columns={columns} data={data} />
       </div>
       {/* <Heading title="API" description="API dos Produtos" />
       <Separator /> */}

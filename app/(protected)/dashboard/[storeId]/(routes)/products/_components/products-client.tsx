@@ -4,10 +4,8 @@ import { CiCirclePlus, CiTrash } from "react-icons/ci";
 import { useParams, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import { ApiList } from "@/components/ui/api-list";
 
 import { ProductColumnProps, columns } from "./products-columns";
 import { useState, useTransition } from "react";
@@ -18,6 +16,7 @@ import { toast } from "sonner";
 import { IoIosAlert } from "react-icons/io";
 import { FaCheckCircle } from "react-icons/fa";
 import { AlertModal } from "@/components/modals/alert-modal";
+import { ProductsDataTable } from "./products-table";
 
 interface ProductsClientProps {
   data: ProductColumnProps[];
@@ -109,7 +108,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
         onConfirm={onDelete}
         loading={isPending}
       />
-      <div className="w-full">
+      <div className="w-full overflow-auto">
         <div className="flex items-center justify-between">
           <Heading
             title={`Todos os Produtos (${data.length})`}
@@ -216,7 +215,11 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
           </div>
         </div>
         <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
-          <DataTable searchKey="name" columns={columns} data={filteredData} />
+          <ProductsDataTable
+            searchKey="name"
+            columns={columns}
+            data={filteredData}
+          />
         </div>
         {/* <Heading title="API" description="API dos Produtos" />
         <Separator /> */}

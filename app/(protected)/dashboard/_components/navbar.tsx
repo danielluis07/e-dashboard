@@ -36,7 +36,7 @@ export const Navbar = ({ imageUrl, stores }: NavbarBarProps) => {
     <div
       className={cn(
         scrolledDown && "bg-milky",
-        "fixed top-0 left-0 right-0 z-10 flex items-center justify-between border-b px-1"
+        "fixed top-0 left-0 right-0 z-20 flex items-center justify-between border-b px-1"
       )}>
       <div className="flex items-center gap-x-3">
         <UserButton imageUrl={imageUrl} />

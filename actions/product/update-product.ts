@@ -67,10 +67,6 @@ export const updateProduct = async (
     return { error: "É necessário informar uma categoria" };
   }
 
-  if (!colorId) {
-    return { error: "É necessário informar uma cor" };
-  }
-
   if (!params.storeId) {
     return { error: "Loja não encontrada" };
   }
@@ -92,7 +88,7 @@ export const updateProduct = async (
         description,
         price: priceInCents,
         categoryId,
-        colorId,
+        colorId: colorId !== "none" ? colorId : null,
         sizes: {
           deleteMany: {},
         },

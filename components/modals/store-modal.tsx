@@ -24,7 +24,6 @@ const StoreModal = () => {
   const storeModal = useStoreModal();
   const [isPending, setTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
-  const [success, setSuccess] = useState<string | undefined>("");
 
   const form = useForm<z.infer<typeof CreateStoreSchema>>({
     resolver: zodResolver(CreateStoreSchema),
@@ -50,7 +49,7 @@ const StoreModal = () => {
   return (
     <Modal
       title="Criar Loja"
-      description="Adicione uma loja para administrar produtos e categorias"
+      description="Adicione uma loja para administrar"
       isOpen={storeModal.isOpen}
       onClose={storeModal.onClose}>
       <div>

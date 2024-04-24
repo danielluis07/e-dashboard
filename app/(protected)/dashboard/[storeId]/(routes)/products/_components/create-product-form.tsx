@@ -15,6 +15,7 @@ import {
   SelectValue,
   SelectContent,
   SelectItem,
+  SelectGroup,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
@@ -35,6 +36,7 @@ import { ProductSchema } from "@/schemas";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoIosAlert } from "react-icons/io";
 import { createProduct } from "@/actions/product/create-product";
+import { NumericFormat } from "react-number-format";
 
 type ProductFormValues = z.infer<typeof ProductSchema>;
 
@@ -62,12 +64,6 @@ export const CreateProductForm = ({
       // or event.code === "Space"
       event.preventDefault();
     }
-  };
-
-  const unformatPrice = (value: string) => {
-    // Convert from '00,00' format to an integer in centavos
-    const unformatted = parseInt(value.replace(",", ""), 10);
-    return unformatted;
   };
 
   const defaultValues = {
@@ -113,44 +109,44 @@ export const CreateProductForm = ({
     remove(index);
   };
 
-  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const formattedValue = value
-      .replace(/\D/g, "") // Remove all non-numeric characters
-      .replace(/(\d)(\d{2})$/, "$1,$2"); // Add comma before the last 2 digits
-    form.setValue("price", formattedValue);
-  };
-
   const onInvalid = (errors: any) => console.error(errors);
 
-  const onSubmit = (values: z.infer<typeof ProductSchema>) => {
-    startTransition(() => {
-      createProduct(
-        { ...values, priceInCents: unformatPrice(values.price) },
-        params
-      ).then((data) => {
-        if (data.error) {
-          toast(data.error, {
-            icon: <IoIosAlert className="text-red-600" />,
-          });
-        }
+  /*   const checkSizes = (sizes) => {
+    const cleanedSizes = sizes.filter(size => 
+      size.name.trim() !== '' && size.value.trim() !== '' && size.quantity > 0
+    );
+  
+    return cleanedSizes.length > 0 ? cleanedSizes : null;
+  } */
 
-        if (data.success) {
-          toast(data.success, {
-            icon: <FaCheckCircle className="text-lime-500" />,
-          });
-          router.push(`/dashboard/${params.storeId}/products`);
+  const onSubmit = (values: z.infer<typeof ProductSchema>) => {
+    const priceInCents = Math.round(
+      Number(values.price.replace(/[^0-9,-]+/g, "").replace(",", ".")) * 100
+    );
+    startTransition(() => {
+      createProduct({ ...values, priceInCents: priceInCents }, params).then(
+        (data) => {
+          if (data.error) {
+            toast(data.error, {
+              icon: <IoIosAlert className="text-red-600" />,
+            });
+          }
+
+          if (data.success) {
+            toast(data.success, {
+              icon: <FaCheckCircle className="text-lime-500" />,
+            });
+            router.push(`/dashboard/${params.storeId}/products`);
+          }
         }
-      });
+      );
     });
   };
 
   return (
     <div className="h-full mt-8">
-      <div className="flex items-center justify-between">
-        <Heading title="Criar produto" description="Adicionar novo produto" />
-      </div>
-      <Separator />
+      <Heading title="Criar produto" />
+      <Separator className="mt-1" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit, onInvalid)}
@@ -221,13 +217,21 @@ export const CreateProductForm = ({
                 <FormItem>
                   <FormLabel>Preço (R$)</FormLabel>
                   <FormControl>
-                    <Input
-                      type="text"
-                      disabled={isPending}
-                      placeholder="Ex: 39,99"
+                    <NumericFormat
                       {...field}
-                      min={1}
-                      onChange={handlePriceChange}
+                      thousandSeparator="."
+                      decimalSeparator=","
+                      prefix={"R$ "}
+                      customInput={Input}
+                      type="text"
+                      placeholder="Ex: 39,99"
+                      onValueChange={(values) => {
+                        const { value } = values;
+                        field.onChange(value);
+                      }}
+                      decimalScale={2}
+                      fixedDecimalScale={true}
+                      allowNegative={false}
                     />
                   </FormControl>
                   <FormMessage />
@@ -265,20 +269,20 @@ export const CreateProductForm = ({
                 </FormItem>
               )}
             />
-            <div className="flex flex-col space-y-5">
+            <div className="flex flex-col py-1 space-y-5 max-h-40 overflow-auto">
               {fields.map((size, index) => (
                 <div
                   key={size.id}
-                  className="flex flex-row space-x-1 xl:justify-between">
+                  className="flex flex-row items-center space-x-5">
                   <FormField
                     control={form.control}
                     name={`sizes.${index}.name`}
                     render={({ field }) => (
-                      <FormItem className="xl:w-24">
+                      <FormItem>
                         <FormControl>
                           <Input
                             onKeyDown={handleKeyDown}
-                            className="w-full"
+                            className="w-[100px]"
                             type="text"
                             placeholder="Ex: Grande"
                             {...field}
@@ -295,13 +299,12 @@ export const CreateProductForm = ({
                         <FormControl>
                           <Input
                             onKeyDown={handleKeyDown}
-                            className="w-full"
+                            className="w-[70px]"
                             type="text"
                             placeholder="Ex: G"
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
@@ -312,20 +315,19 @@ export const CreateProductForm = ({
                       <FormItem className="xl:w-14">
                         <FormControl>
                           <Input
-                            className="w-full"
+                            className="w-[70px]"
                             type="number"
                             min={0}
                             {...field}
                           />
                         </FormControl>
-                        <FormMessage />
                       </FormItem>
                     )}
                   />
                   <Button
                     type="button"
                     onClick={() => handleRemoveSize(index)}
-                    disabled={fields.length <= 1}>
+                    disabled={fields.length <= 1 || isPending}>
                     <FaMinus />
                   </Button>
                 </div>
@@ -333,7 +335,8 @@ export const CreateProductForm = ({
               <Button
                 type="button"
                 onClick={handleAddSize}
-                disabled={fields.length >= 5}>
+                disabled={fields.length >= 5 || isPending}
+                className="w-5/6 mx-auto">
                 Adicionar Tamanho
               </Button>
             </div>
@@ -346,22 +349,27 @@ export const CreateProductForm = ({
                   <Select
                     disabled={isPending}
                     onValueChange={field.onChange}
-                    value={field.value}
-                    defaultValue={field.value}>
+                    value={field.value ?? "none"}
+                    defaultValue={field.value ?? "none"}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue
-                          defaultValue={field.value}
+                          defaultValue={field.value ?? "none"}
                           placeholder="Selecione uma cor"
                         />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {colors.map((color) => (
-                        <SelectItem key={color.id} value={color.id}>
-                          {color.name}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        <SelectItem value="none">Sem Cor</SelectItem>
+                      </SelectGroup>
+                      <SelectGroup>
+                        {colors.map((color) => (
+                          <SelectItem key={color.id} value={color.id}>
+                            {color.name}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                   <FormMessage />

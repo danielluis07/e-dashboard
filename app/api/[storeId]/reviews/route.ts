@@ -96,6 +96,8 @@ export async function GET(
   req: Request,
   { params }: { params: { storeId: string } }
 ) {
+  const { searchParams } = new URL(req.url);
+  const productId = searchParams.get("productId") || undefined;
   try {
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -104,6 +106,7 @@ export async function GET(
     const reviews = await db.review.findMany({
       where: {
         storeId: params.storeId,
+        productId,
       },
       include: {
         user: true,

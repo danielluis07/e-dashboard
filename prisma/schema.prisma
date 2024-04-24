@@ -164,6 +164,7 @@ model Category {
   billboard             Billboard?   @relation(fields: [billboardId], references: [id])
   products              Product[]   @relation("CategoryToProduct")
   name                  String
+  value                 String
   imageUrl              String?
   createdAt             DateTime    @default(now())
   updatedAt             DateTime    @updatedAt
@@ -258,7 +259,7 @@ model Product {
   discountStartDate     DateTime?       
   discountEndDate       DateTime?
   sizes                 Size[]          @relation("ProductToSize")
-  colorId               String          // Foreign Key to Color
+  colorId               String?          // Foreign Key to Color
   stock                 Int             @default(0)
   averageRating         Float?          @default(0)
   totalReviews          Int             @default(0)

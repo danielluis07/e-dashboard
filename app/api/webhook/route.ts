@@ -7,9 +7,15 @@ import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   const body = await req.text();
-  const signature = headers().get("Stripe-Signature") as string;
+  const signature = headers().get("Stripe-Signature");
 
   let event: Stripe.Event;
+
+  if (!signature) {
+    return new NextResponse("Stripe signature missing in the headers", {
+      status: 400,
+    });
+  }
 
   try {
     event = stripe.webhooks.constructEvent(
@@ -21,74 +27,52 @@ export async function POST(req: Request) {
     return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
   }
 
-  const session = event.data.object as Stripe.Checkout.Session;
-  const address = session?.customer_details?.address;
-
-  const addressComponents = [
-    address?.line1,
-    address?.line2,
-    address?.city,
-    address?.state,
-    address?.postal_code,
-    address?.country,
-  ];
-
-  const addressString = addressComponents.filter((c) => c !== null).join(", ");
-
   if (event.type === "checkout.session.completed") {
-    const order = await db.order.findUnique({
-      where: { id: session?.metadata?.orderId },
-      include: {
-        orderItems: {
-          include: {
-            product: {
-              include: {
-                sizes: true,
-              },
+    const session = event.data.object as Stripe.Checkout.Session;
+
+    // Process the checkout session completion
+    try {
+      const order = await db.order.update({
+        where: { id: session.metadata?.orderId },
+        data: {
+          isPaid: true,
+          address: session.customer_details?.address
+            ? [
+                session.customer_details.address.line1,
+                session.customer_details.address.line2,
+                session.customer_details.address.city,
+                session.customer_details.address.state,
+                session.customer_details.address.postal_code,
+                session.customer_details.address.country,
+              ]
+                .filter(Boolean)
+                .join(", ")
+            : "",
+          phone: session.customer_details?.phone || "",
+        },
+        include: {
+          orderItems: {
+            include: {
+              product: true,
+              size: true,
             },
           },
         },
-      },
-    });
+      });
 
-    if (!order) {
-      throw new Error(
-        `Could not find order with id:${session?.metadata?.orderId} `
-      );
-    }
-
-    try {
-      for (const orderItem of order.orderItems) {
-        const sizeId = orderItem.sizeIds; // Assuming sizeIds is an array of size IDs
-        const productId = orderItem.productId;
-
-        // Find the corresponding size
-        const size = await db.size.findUnique({ where: { id: sizeId } });
-        if (!size) throw new Error(`Size with ID ${sizeId} not found`);
-
-        // Stock validation
-        if (size.quantity < 1) {
-          throw new Error(`Insufficient stock for size ID ${sizeId}`);
-        }
-
-        // Decrement the size stock
-        const updatedSize = await db.size.update({
-          where: { id: sizeId },
+      // Update inventory for each order item
+      for (const item of order.orderItems) {
+        await db.size.update({
+          where: { id: item.sizeId },
           data: { quantity: { decrement: 1 } },
         });
 
-        if (updatedSize.quantity < 1) {
-          await db.size.delete({
-            where: { id: sizeId },
-          });
-        }
-
-        // Find and update the corresponding ProductSize
+        // Update the ProductSize for specific product and size combination
         const productSize = await db.productSize.findUnique({
           where: {
             productId_sizeId: {
-              productId,
-              sizeId,
+              productId: item.productId,
+              sizeId: item.sizeId,
             },
           },
         });
@@ -97,8 +81,8 @@ export async function POST(req: Request) {
           await db.productSize.update({
             where: {
               productId_sizeId: {
-                productId,
-                sizeId,
+                productId: item.productId,
+                sizeId: item.sizeId,
               },
             },
             data: {
@@ -107,48 +91,18 @@ export async function POST(req: Request) {
           });
         }
 
-        const sizes = await db.size.findMany({
-          where: { productId },
-        });
-
-        const totalStock = sizes.reduce((sum, size) => sum + size.quantity, 0);
-        const isArchived = totalStock <= 0;
-
+        // Update product stock and sales count
         await db.product.update({
-          where: {
-            id: productId,
-          },
+          where: { id: item.productId },
           data: {
-            stock: totalStock,
+            stock: { decrement: 1 },
             salesCount: { increment: 1 },
-            isArchived,
           },
         });
       }
-
-      await db.order.update({
-        where: {
-          id: order?.id,
-        },
-        data: {
-          isPaid: true,
-          address: addressString,
-          phone: session?.customer_details?.phone || "",
-        },
-        include: {
-          orderItems: {
-            include: {
-              product: {
-                include: {
-                  sizes: true,
-                },
-              },
-            },
-          },
-        },
-      });
-    } catch (error) {
-      throw new Error(`Failed to update product and order: ${error}`);
+    } catch (error: any) {
+      console.error(`Failed to process order completion: ${error}`);
+      return new NextResponse("Internal Server Error", { status: 500 });
     }
   }
 

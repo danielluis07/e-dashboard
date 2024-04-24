@@ -6,12 +6,17 @@ import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
 import { ApiList } from "@/components/ui/api-list";
 import { SizesColumnProps, columns } from "./sizes-columns";
+import { orderPaidTest } from "@/actions/test";
+import { Button } from "@/components/ui/button";
 
 interface SizesClientProps {
   data: SizesColumnProps[];
 }
 
 export const SizesClient = ({ data }: SizesClientProps) => {
+  const onClick = () => {
+    orderPaidTest();
+  };
   return (
     <>
       <div className="flex items-center justify-between">
@@ -19,6 +24,7 @@ export const SizesClient = ({ data }: SizesClientProps) => {
           title={`Tamanhos (${data.length})`}
           description="Os tamanhos criados na página de produtos aparecerão aqui"
         />
+        <Button onClick={onClick}>teste</Button>
       </div>
       <Separator />
       <DataTable searchKey="name" columns={columns} data={data} />

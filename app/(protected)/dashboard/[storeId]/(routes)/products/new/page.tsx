@@ -15,7 +15,7 @@ const NewProductPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
   return (
-    <div className="h-full xl:flex items-center justify-center mt-14 xl:mt-0">
+    <div className="h-screen xl:flex items-center justify-center mt-14 xl:mt-0 xl:overflow-auto">
       <FormWrapper>
         <CreateProductForm categories={categories} colors={colors} />
       </FormWrapper>

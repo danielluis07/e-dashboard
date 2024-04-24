@@ -61,21 +61,27 @@ export const CreateCategoryForm = ({
   const onInvalid = (errors: any) => console.error(errors);
 
   const onSubmit = async (values: z.infer<typeof CategorySchema>) => {
+    const additionalValue = values.name
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f\s\d\\\/]/g, "")
+      .toLowerCase();
     startTransition(() => {
-      createCategory(values, params).then((data) => {
-        if (data.error) {
-          toast(data.error, {
-            icon: <IoIosAlert className="text-red-600" />,
-          });
-        }
+      createCategory({ ...values, value: additionalValue }, params).then(
+        (data) => {
+          if (data.error) {
+            toast(data.error, {
+              icon: <IoIosAlert className="text-red-600" />,
+            });
+          }
 
-        if (data.success) {
-          toast(data.success, {
-            icon: <FaCheckCircle className="text-lime-500" />,
-          });
-          router.push(`/dashboard/${params.storeId}/categories`);
+          if (data.success) {
+            toast(data.success, {
+              icon: <FaCheckCircle className="text-lime-500" />,
+            });
+            router.push(`/dashboard/${params.storeId}/categories`);
+          }
         }
-      });
+      );
     });
   };
 

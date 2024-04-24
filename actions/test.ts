@@ -3,19 +3,19 @@
 import { db } from "@/lib/db";
 
 export const orderPaidTest = async () => {
-  const orderId = "32c61c12-e70f-41f6-8f56-d8a8e5c2af6b";
+  const orderId = "109df604-e964-4266-b9dc-51980111537a";
 
   try {
-    const order = await db.order.findUnique({
+    const order = await db.order.update({
       where: { id: orderId },
+      data: {
+        isPaid: true,
+      },
       include: {
         orderItems: {
           include: {
-            product: {
-              include: {
-                sizes: true,
-              },
-            },
+            product: true,
+            size: true,
           },
         },
       },
@@ -23,41 +23,19 @@ export const orderPaidTest = async () => {
 
     if (!order) throw new Error("Order not found");
 
-    console.log(order, "order");
-    console.log(order.orderItems, "orderitems");
-
-    // Loop through each order item
-    for (const orderItem of order.orderItems) {
-      const sizeId = orderItem.sizeIds; // Assuming sizeIds is an array of size IDs
-      const productId = orderItem.productId;
-
-      // Find the corresponding size
-      const size = await db.size.findUnique({ where: { id: sizeId } });
-      if (!size) throw new Error(`Size with ID ${sizeId} not found`);
-
-      // Stock validation
-      if (size.quantity < 1) {
-        throw new Error(`Insufficient stock for size ID ${sizeId}`);
-      }
-
-      // Decrement the size stock
-      const updatedSize = await db.size.update({
-        where: { id: sizeId },
+    // Update inventory for each order item
+    for (const item of order.orderItems) {
+      await db.size.update({
+        where: { id: item.sizeId },
         data: { quantity: { decrement: 1 } },
       });
 
-      if (updatedSize.quantity < 1) {
-        await db.size.delete({
-          where: { id: sizeId },
-        });
-      }
-
-      // Find and update the corresponding ProductSize
+      // Update the ProductSize for specific product and size combination
       const productSize = await db.productSize.findUnique({
         where: {
           productId_sizeId: {
-            productId,
-            sizeId,
+            productId: item.productId,
+            sizeId: item.sizeId,
           },
         },
       });
@@ -66,8 +44,8 @@ export const orderPaidTest = async () => {
         await db.productSize.update({
           where: {
             productId_sizeId: {
-              productId,
-              sizeId,
+              productId: item.productId,
+              sizeId: item.sizeId,
             },
           },
           data: {
@@ -76,24 +54,17 @@ export const orderPaidTest = async () => {
         });
       }
 
-      const sizes = await db.size.findMany({
-        where: { productId },
-      });
-
-      const totalStock = sizes.reduce((sum, size) => sum + size.quantity, 0);
-      const isArchived = totalStock <= 0;
-
+      // Update product stock and sales count
       await db.product.update({
-        where: {
-          id: productId,
-        },
+        where: { id: item.productId },
         data: {
-          stock: totalStock,
-          isArchived,
+          stock: { decrement: 1 },
+          salesCount: { increment: 1 },
         },
       });
     }
-  } catch (error) {
-    throw error;
+    console.log("deu boa");
+  } catch (error: any) {
+    console.error(`Failed to process order completion: ${error}`);
   }
 };

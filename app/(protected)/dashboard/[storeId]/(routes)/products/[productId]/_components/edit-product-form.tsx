@@ -39,6 +39,8 @@ import { updateProduct } from "@/actions/product/update-product";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoIosAlert } from "react-icons/io";
 import { deleteProduct } from "@/actions/product/delete-product";
+import { NumericFormat } from "react-number-format";
+import { SelectGroup } from "@radix-ui/react-select";
 
 type ProductFormValues = z.infer<typeof ProductSchema>;
 
@@ -68,11 +70,6 @@ export const EditProductForm = ({
       // or event.code === "Space"
       event.preventDefault();
     }
-  };
-  const unformatPrice = (formattedPrice: string) => {
-    // Replace commas with dots, then convert to a number and multiply by 100 to get centavos
-    const numberPrice = Number(formattedPrice.replace(",", ".")) * 100;
-    return Math.round(numberPrice); // Round to the nearest integer if needed
   };
 
   const defaultValues = initialData
@@ -123,33 +120,27 @@ export const EditProductForm = ({
     remove(index);
   };
 
-  const handlePriceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    const formattedValue = value
-      .replace(/\D/g, "") // Remove all non-numeric characters
-      .replace(/(\d)(\d{2})$/, "$1,$2"); // Add comma before the last 2 digits
-    form.setValue("price", formattedValue);
-  };
-
   const onSubmit = (values: z.infer<typeof ProductSchema>) => {
+    const priceInCents = Math.round(
+      Number(values.price.replace(/[^0-9,-]+/g, "").replace(",", ".")) * 100
+    );
     startTransition(() => {
-      updateProduct(
-        { ...values, priceInCents: unformatPrice(values.price) },
-        params
-      ).then((data) => {
-        if (data.error) {
-          toast(data.error, {
-            icon: <IoIosAlert className="text-red-600" />,
-          });
-        }
+      updateProduct({ ...values, priceInCents: priceInCents }, params).then(
+        (data) => {
+          if (data.error) {
+            toast(data.error, {
+              icon: <IoIosAlert className="text-red-600" />,
+            });
+          }
 
-        if (data.success) {
-          toast(data.success, {
-            icon: <FaCheckCircle className="text-lime-500" />,
-          });
-          router.push(`/dashboard/${params.storeId}/products`);
+          if (data.success) {
+            toast(data.success, {
+              icon: <FaCheckCircle className="text-lime-500" />,
+            });
+            router.push(`/dashboard/${params.storeId}/products`);
+          }
         }
-      });
+      );
     });
   };
 
@@ -180,20 +171,18 @@ export const EditProductForm = ({
         onConfirm={onDelete}
         loading={isPending}
       />
-      <div className="h-full mt-8">
+      <div>
         <div className="flex items-center justify-between">
-          <Heading title="Editar produto" description="Editar um produto" />
-          {initialData && (
-            <Button
-              disabled={isPending}
-              variant="destructive"
-              size="sm"
-              onClick={() => setOpen(true)}>
-              <CiTrash className="size-5" />
-            </Button>
-          )}
+          <Heading title="Editar produto" />
+          <Button
+            disabled={isPending}
+            variant="destructive"
+            size="sm"
+            onClick={() => setOpen(true)}>
+            <CiTrash className="size-5 z-10" />
+          </Button>
         </div>
-        <Separator />
+        <Separator className="mt-1" />
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
@@ -261,18 +250,27 @@ export const EditProductForm = ({
               />
               <FormField
                 control={form.control}
+                defaultValue=""
                 name="price"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Preço (R$)</FormLabel>
                     <FormControl>
-                      <Input
-                        type="text"
-                        disabled={isPending}
-                        placeholder="Ex: 40"
+                      <NumericFormat
                         {...field}
-                        min={1}
-                        onChange={handlePriceChange}
+                        thousandSeparator="."
+                        decimalSeparator=","
+                        prefix={"R$ "}
+                        customInput={Input}
+                        type="text"
+                        placeholder="Ex: 39,99"
+                        onValueChange={(values) => {
+                          const { value } = values;
+                          field.onChange(value);
+                        }}
+                        decimalScale={2}
+                        fixedDecimalScale={true}
+                        allowNegative={false}
                       />
                     </FormControl>
                     <FormMessage />
@@ -310,7 +308,7 @@ export const EditProductForm = ({
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col space-y-5">
+              <div className="flex flex-col space-y-5 max-h-40 overflow-auto">
                 {fields.map((size, index) => (
                   <div key={size.id} className="flex flex-row space-x-3">
                     <FormField
@@ -338,7 +336,7 @@ export const EditProductForm = ({
                           <FormControl>
                             <Input
                               onKeyDown={handleKeyDown}
-                              className="w-[100px]"
+                              className="w-[70px]"
                               type="text"
                               placeholder="Ex: G"
                               {...field}
@@ -355,7 +353,7 @@ export const EditProductForm = ({
                         <FormItem>
                           <FormControl>
                             <Input
-                              className="w-[100px]"
+                              className="w-[70px]"
                               type="number"
                               min={0}
                               {...field}
@@ -368,7 +366,7 @@ export const EditProductForm = ({
                     <Button
                       type="button"
                       onClick={() => handleRemoveSize(index)}
-                      disabled={fields.length <= 1}>
+                      disabled={fields.length <= 1 || isPending}>
                       <FaMinus />
                     </Button>
                   </div>
@@ -376,7 +374,8 @@ export const EditProductForm = ({
                 <Button
                   type="button"
                   onClick={handleAddSize}
-                  disabled={fields.length >= 5}>
+                  disabled={fields.length >= 5 || isPending}
+                  className="w-5/6 mx-auto">
                   Adicionar Tamanho
                 </Button>
               </div>
@@ -389,22 +388,27 @@ export const EditProductForm = ({
                     <Select
                       disabled={isPending}
                       onValueChange={field.onChange}
-                      value={field.value}
-                      defaultValue={field.value}>
+                      value={field.value ?? "none"}
+                      defaultValue={field.value ?? "none"}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue
-                            defaultValue={field.value}
+                            defaultValue={field.value ?? "none"}
                             placeholder="Selecione uma cor"
                           />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {colors.map((color) => (
-                          <SelectItem key={color.id} value={color.id}>
-                            {color.name}
-                          </SelectItem>
-                        ))}
+                        <SelectGroup>
+                          <SelectItem value="none">Sem Cor</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          {colors.map((color) => (
+                            <SelectItem key={color.id} value={color.id}>
+                              {color.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                     <FormMessage />

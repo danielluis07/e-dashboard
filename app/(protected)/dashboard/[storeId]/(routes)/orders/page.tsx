@@ -28,6 +28,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
   const formattedOrder: OrdersColumnsProps[] = orders.map((item) => ({
     id: item.id,
     storeId: item.storeId,
+    orderNumber: item.number,
     user: item.user.name,
     userEmail: item.user.email,
     phone: item.phone,
@@ -40,8 +41,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
         return total + Number(item.product.price);
       }, 0)
     ),
-
-    isPaid: item.isPaid,
+    isPaid: item.isPaid ? "Sim" : "Não",
     createdAt: format(item.createdAt, "dd/MM/yyyy", { locale: ptBR }),
   }));
 

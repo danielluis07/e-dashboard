@@ -1,9 +1,15 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-import { Product } from "@prisma/client";
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+
+interface ProductCheckoutInfo {
+  productId: string;
+  sizeId: string;
+  sizeName: string;
+  sizeValue: string;
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,19 +36,38 @@ export async function POST(
     return new NextResponse("Product information is required", { status: 400 });
   }
 
+  if (
+    products.some(
+      (product: ProductCheckoutInfo) => !product.productId || !product.sizeId
+    )
+  ) {
+    return new NextResponse("Each product must have a productId and sizeId", {
+      status: 400,
+    });
+  }
+
   const user = await db.user.findUnique({ where: { id: userId } });
   if (!user) {
     return new NextResponse("User not found", { status: 400 });
   }
 
   // Query for products based on provided IDs
+  const productIds = products.map(
+    (product: ProductCheckoutInfo) => product.productId
+  );
   const productDetails = await db.product.findMany({
     where: {
       id: {
-        in: products.map((product: any) => product.productId),
+        in: productIds,
       },
     },
   });
+
+  if (productDetails.length !== products.length) {
+    return new NextResponse("One or more products not found in database", {
+      status: 404,
+    });
+  }
 
   const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] =
     productDetails.map((product) => ({
@@ -61,9 +86,9 @@ export async function POST(
     data: {
       storeId: params.storeId,
       userId: userId,
-      isPaid: true,
+      isPaid: false,
       orderItems: {
-        create: products.map((product: any) => ({
+        create: products.map((product: ProductCheckoutInfo) => ({
           productId: product.productId,
           sizeId: product.sizeId, // Ensuring each order item has the correct size
         })),

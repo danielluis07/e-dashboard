@@ -49,7 +49,7 @@ const SettingsPage: React.FC<SettingsPageProps> = async ({ params }) => {
   };
 
   return (
-    <div className="h-full xl:overflow-auto p-3 pt-16 xl:pt-0">
+    <div className="h-full xl:h-screen xl:overflow-auto p-3 pt-16 xl:pt-0">
       <FormWrapper>
         <SettingsForm initialData={settingsData} />
       </FormWrapper>
