@@ -11,6 +11,12 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+enum OrderStatus {
+  PAID
+  WAITING_FOR_PAYMENT
+  CANCELED
+}
+
 model MyUser {
   id                    String    @id @default(cuid())
   name                  String?
@@ -306,7 +312,10 @@ model Order {
   userId                String
   user                  User      @relation(fields: [userId], references: [id])
   orderItems            OrderItem[] // Relation to OrderItem model
-  isPaid                Boolean   @default(false)
+  status                OrderStatus   @default(WAITING_FOR_PAYMENT)
+  isRefunded            Boolean?  @default(false)
+  isShipped             Boolean   @default(false)
+  shippingDate          DateTime?
   shippingMethod        ShippingMethod? @relation("ShippingMethodToOrder", fields: [shippingMethodId], references: [id])
   shippingMethodId      String?      // Foreign Key to ShippingMethod model, representing the selected shipping method
   phone                 String    @default("")

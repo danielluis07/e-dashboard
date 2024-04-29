@@ -9,7 +9,7 @@ export type OrdersColumnsProps = {
   storeId: string;
   phone: string;
   address: string;
-  isPaid: string;
+  status: string;
   totalPrice: string;
   products: string;
   createdAt: string;
@@ -47,20 +47,12 @@ export const columns: ColumnDef<OrdersColumnsProps>[] = [
     header: "Usuário",
   },
   {
-    accessorKey: "phone",
-    header: "Telefone",
-  },
-  {
-    accessorKey: "address",
-    header: "Endereço",
-  },
-  {
     accessorKey: "totalPrice",
     header: "Preço Total",
   },
   {
-    accessorKey: "isPaid",
-    header: "Pago",
+    accessorKey: "status",
+    header: "Status",
   },
   {
     id: "actions",

@@ -1,11 +1,15 @@
-import { FormWrapper } from "@/components/creation-form";
 import { db } from "@/lib/db";
 import { OrderInfo } from "./_components/order-info";
 
-const OrderPage = async ({ params }: { params: { orderId: string } }) => {
+const OrderPage = async ({
+  params,
+}: {
+  params: { storeId: string; orderId: string };
+}) => {
   const order = await db.order.findUnique({
     where: {
       id: params.orderId,
+      storeId: params.storeId,
     },
     include: {
       user: true,
@@ -19,10 +23,8 @@ const OrderPage = async ({ params }: { params: { orderId: string } }) => {
   });
 
   return (
-    <div className="flex items-center justify-center h-full">
-      <FormWrapper>
-        <OrderInfo order={order} />
-      </FormWrapper>
+    <div className="h-full xl:h-screen mt-14 xl:mt-0 xl:overflow-auto">
+      <OrderInfo order={order} />
     </div>
   );
 };

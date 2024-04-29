@@ -25,6 +25,16 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     },
   });
 
+  const statusPagamento = (status: string | undefined) => {
+    if (status === "PAID") {
+      return "Pago";
+    } else if (status === "WAITING_FOR_PAYMENT") {
+      return "Aguardando Pagamento";
+    } else {
+      return "Cancelado";
+    }
+  };
+
   const formattedOrder: OrdersColumnsProps[] = orders.map((item) => ({
     id: item.id,
     storeId: item.storeId,
@@ -41,7 +51,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
         return total + Number(item.product.price);
       }, 0)
     ),
-    isPaid: item.isPaid ? "Sim" : "Não",
+    status: statusPagamento(item.status),
     createdAt: format(item.createdAt, "dd/MM/yyyy", { locale: ptBR }),
   }));
 

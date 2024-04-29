@@ -6,7 +6,7 @@ export const getTotalRevenue = async (storeId: string) => {
   const paidOrders = await db.order.findMany({
     where: {
       storeId,
-      isPaid: true,
+      status: "PAID",
     },
     include: {
       orderItems: {

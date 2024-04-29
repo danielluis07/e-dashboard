@@ -9,7 +9,7 @@ export const orderPaidTest = async () => {
     const order = await db.order.update({
       where: { id: orderId },
       data: {
-        isPaid: true,
+        status: "PAID",
       },
       include: {
         orderItems: {

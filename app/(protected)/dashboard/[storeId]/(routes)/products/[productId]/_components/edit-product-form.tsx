@@ -308,7 +308,7 @@ export const EditProductForm = ({
                   </FormItem>
                 )}
               />
-              <div className="flex flex-col space-y-5 max-h-40 overflow-auto">
+              <div className="flex flex-col space-y-5 max-h-36 overflow-auto">
                 {fields.map((size, index) => (
                   <div key={size.id} className="flex flex-row space-x-3">
                     <FormField

@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       const order = await db.order.update({
         where: { id: session.metadata?.orderId },
         data: {
-          isPaid: true,
+          status: "PAID",
           address: session.customer_details?.address
             ? [
                 session.customer_details.address.line1,

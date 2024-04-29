@@ -19,7 +19,7 @@ import { Button } from "../ui/button";
 import { FormError } from "../form-error";
 import { FormSuccess } from "../form-success";
 import { login } from "@/actions/login";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { FaRegEye } from "react-icons/fa6";
@@ -37,6 +37,7 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [isMounted, setIsMounted] = useState<boolean>(false);
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -69,6 +70,14 @@ export const LoginForm = () => {
         .catch(() => setError("Algo deu Errado!"));
     });
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return false;
+  }
 
   return (
     <CardWrapper

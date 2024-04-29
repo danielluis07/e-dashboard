@@ -39,18 +39,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
 
-interface ReviewsDataTableProps<TData, TValue> {
+interface OrdersDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
   filters?: Filters;
 }
 
-export function ReviewsDataTable<TData, TValue>({
+export function OrdersDataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-}: ReviewsDataTableProps<TData, TValue>) {
+}: OrdersDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -94,7 +94,7 @@ export function ReviewsDataTable<TData, TValue>({
           }
           className="w-1/2"
         />
-        {table.getRowModel().rows?.length ? (
+        {table.getRowModel().rows?.length && (
           <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
             <DropdownMenuTrigger asChild>
               <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
@@ -126,8 +126,6 @@ export function ReviewsDataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : (
-          <div></div>
         )}
       </div>
       <div className="rounded-md border">
@@ -136,8 +134,9 @@ export function ReviewsDataTable<TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
+                  console.log(header);
                   return (
-                    <TableHead key={header.id} className="font-extrabold">
+                    <TableHead key={header.id} className="text-center">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -157,25 +156,25 @@ export function ReviewsDataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => {
+                    console.log(cell);
                     let cellStyle = "";
-                    if (cell.column.id === "hasReply") {
-                      if (cell.getValue() === "Sim") {
+                    if (cell.column.id === "status") {
+                      if (cell.getValue() === "Aguardando Pagamento") {
                         cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Sim'
-                      } else if (cell.getValue() === "Não") {
+                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold"; // Style for 'Sim'
+                      } else if (cell.getValue() === "Pago") {
                         cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-red-200 text-red-700 font-bold"; // Style for 'Não'
+                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Não'
                       }
                     }
-
                     return (
-                      <TableCell key={cell.id}>
-                        <div className={cn(cellStyle)}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
-                        </div>
+                      <TableCell
+                        key={cell.id}
+                        className={cn("text-center", cellStyle)}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     );
                   })}

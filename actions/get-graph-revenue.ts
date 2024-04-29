@@ -13,7 +13,7 @@ export const getGraphRevenue = async (
   const paidOrders = await db.order.findMany({
     where: {
       storeId,
-      isPaid: true,
+      status: "PAID",
     },
     include: {
       orderItems: {

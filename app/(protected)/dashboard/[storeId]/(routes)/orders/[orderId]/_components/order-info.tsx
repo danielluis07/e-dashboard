@@ -31,7 +31,7 @@ interface OrderProps {
   number: number;
   storeId: string;
   userId: string;
-  isPaid: boolean;
+  status: "PAID" | "WAITING_FOR_PAYMENT" | "CANCELED" | undefined;
   shippingMethodId: string | null;
   phone: string;
   address: string;
@@ -46,24 +46,50 @@ interface OrderInfoProps {
 }
 
 export const OrderInfo = ({ order }: OrderInfoProps) => {
-  console.log(order);
   const router = useRouter();
   const params = useParams<{ storeId: string; orderId: string }>();
 
-  const handleClick = (productId: string) => {
-    router.push(
-      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/${params.storeId}/products/${productId}`
-    );
+  const handleClickProduct = (productId: string) => {
+    router.push(`/dashboard/${params.storeId}/products/${productId}`);
+  };
+
+  const handleClickUser = (userId: string | undefined) => {
+    router.push(`/dashboard/${params.storeId}/users/${userId}`);
+  };
+
+  const statusPagamento = (status: string | undefined) => {
+    if (status === "PAID") {
+      return "Pago";
+    } else if (status === "WAITING_FOR_PAYMENT") {
+      return "Aguardando Pagamento";
+    } else {
+      return "Cancelado";
+    }
   };
 
   return (
-    <div className="pt-5 space-y-4">
+    <div className="pt-5 space-y-4 h-full">
       <div>
         <p className="text-2xl font-bold">Pedido nº{order?.number}</p>
-        <Card className="mt-4 p-2">
-          <p>Usuário: {order?.user.name}</p>
-          <p>Email: {order?.user.email}</p>
-          <p>Pago: {order?.isPaid ? "Sim" : "Não"}</p>
+        <Card className="mt-4 p-2 space-y-5">
+          <div
+            className="min-w-10 max-w-36"
+            onClick={() => handleClickUser(order?.userId)}>
+            <p className="font-bold">
+              Usuário:{" "}
+              <span className="underline hover:no-underline cursor-pointer truncate">
+                {order?.user.name}
+              </span>
+            </p>
+          </div>
+          <p>
+            <span className="font-bold">Email: </span>
+            {order?.user.email}
+          </p>
+          <p>
+            <span className="font-bold">Status: </span>
+            {statusPagamento(order?.status)}
+          </p>
         </Card>
       </div>
       <div className="mt-3">
@@ -72,12 +98,20 @@ export const OrderInfo = ({ order }: OrderInfoProps) => {
           {order?.orderItems.map((item, index) => (
             <Card key={index} className="p-2">
               <div
-                className="text-lg font-bold underline hover:no-underline cursor-pointer truncate"
-                onClick={() => handleClick(item.productId)}>
+                className="text-lg font-bold underline hover:no-underline cursor-pointer min-w-10 max-w-36 truncate"
+                onClick={() => handleClickProduct(item.productId)}>
                 {item.product.name}
               </div>
-              <p>Tamanho: {item.size?.value}</p>
-              <p>Preço: {convertCentsToReal(item.product.price)}</p>
+              <div className="mt-3 space-y-3">
+                <p>
+                  <span className="font-bold">Tamanho: </span>
+                  {item.size?.value}
+                </p>
+                <p>
+                  <span className="font-bold">Preço: </span>
+                  {convertCentsToReal(item.product.price)}
+                </p>
+              </div>
             </Card>
           ))}
         </div>

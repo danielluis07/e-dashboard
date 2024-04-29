@@ -40,6 +40,10 @@ export const columns: ColumnDef<ReviewColumnProps>[] = [
     header: "Data",
   },
   {
+    accessorKey: "product",
+    header: "Produto",
+  },
+  {
     accessorKey: "user",
     header: "Usuário",
   },
