@@ -8,6 +8,7 @@ import { ApiList } from "@/components/ui/api-list";
 import { SizesColumnProps, columns } from "./sizes-columns";
 import { orderPaidTest } from "@/actions/test";
 import { Button } from "@/components/ui/button";
+import { SizesDataTable } from "./sizes-table";
 
 interface SizesClientProps {
   data: SizesColumnProps[];
@@ -27,7 +28,7 @@ export const SizesClient = ({ data }: SizesClientProps) => {
         <Button onClick={onClick}>teste</Button>
       </div>
       <Separator />
-      <DataTable searchKey="name" columns={columns} data={data} />
+      <SizesDataTable searchKey="name" columns={columns} data={data} />
       {/* <Heading title="API" description="API dos Tamanhos" />
       <Separator /> */}
       {/* <ApiList entityName="sizes" entityIdName="sizeId" /> */}

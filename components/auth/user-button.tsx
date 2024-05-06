@@ -22,7 +22,9 @@ export const UserButton = ({ isOpen, imageUrl }: UserButtonProps) => {
         src={image ? image : placeholder}
         alt="usuario"
         fill
-        className="size-full object-cover"
+        priority
+        className="object-cover"
+        sizes="(max-width: 3840px) 32px"
       />
     </div>
   );

@@ -81,54 +81,20 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
 
   const filteredData = filterData(data, filters);
 
-  const onDelete = () => {
-    startTransition(() => {
-      deleteProducts(params).then((data) => {
-        if (data.error) {
-          toast(data.error, {
-            icon: <IoIosAlert className="text-red-600" />,
-          });
-        }
-
-        if (data.success) {
-          toast(data.success, {
-            icon: <FaCheckCircle className="text-lime-500" />,
-          });
-          setOpen(false);
-        }
-      });
-    });
-  };
-
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={isPending}
-      />
       <div className="w-full overflow-auto">
         <div className="flex items-center justify-between">
           <Heading
             title={`Todos os Produtos (${data.length})`}
             description="Gerencie os produtos de sua loja"
           />
-          <div className="flex flex-col md:flex-row gap-x-4 gap-y-2">
-            <Button
-              variant="destructive"
-              onClick={() => setOpen(true)}
-              disabled={data.length < 1}>
-              <CiTrash className="mr-2 size-4" />
-              Deletar Todos
-            </Button>
-            <Button
-              onClick={() =>
-                router.push(`/dashboard/${params.storeId}/products/new`)
-              }>
-              <CiCirclePlus className="mr-2 size-5" /> Adicionar
-            </Button>
-          </div>
+          <Button
+            onClick={() =>
+              router.push(`/dashboard/${params.storeId}/products/new`)
+            }>
+            <CiCirclePlus className="mr-2 size-5" /> Adicionar
+          </Button>
         </div>
         <Separator className="my-8" />
         <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto grid gap-1 grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">

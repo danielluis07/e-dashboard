@@ -63,7 +63,7 @@ export const EditProductForm = ({
   const params = useParams<{ storeId: string; productId: string }>();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === " ") {

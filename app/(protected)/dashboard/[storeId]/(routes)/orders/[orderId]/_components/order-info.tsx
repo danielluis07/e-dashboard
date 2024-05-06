@@ -1,12 +1,10 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
-import { Order, Product, Size } from "@prisma/client";
+import { Product } from "@prisma/client";
 import { User } from "@prisma/client";
 import { convertCentsToReal } from "@/lib/utils";
-import { OrderItem } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import Image from "next/image";
 
 interface OrderItemProps {
   id: string;
@@ -34,7 +32,12 @@ interface OrderProps {
   status: "PAID" | "WAITING_FOR_PAYMENT" | "CANCELED" | undefined;
   shippingMethodId: string | null;
   phone: string;
-  address: string;
+  address1: string | null;
+  address2: string | null;
+  city: string | null;
+  state: string | null;
+  postalCode: string | null;
+  country: string | null;
   createdAt: Date;
   updatedAt: Date;
   user: User;

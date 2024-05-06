@@ -94,7 +94,7 @@ export function ReviewsDataTable<TData, TValue>({
           }
           className="w-1/2"
         />
-        {table.getRowModel().rows?.length ? (
+        {table.getRowModel().rows?.length && (
           <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
             <DropdownMenuTrigger asChild>
               <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
@@ -126,8 +126,6 @@ export function ReviewsDataTable<TData, TValue>({
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-        ) : (
-          <div></div>
         )}
       </div>
       <div className="rounded-md border">

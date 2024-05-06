@@ -57,9 +57,10 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
           Nome
-          <LuArrowUpDown className="ml-2 size-4" />
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
         </Button>
       );
     },
@@ -70,9 +71,24 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
           Número
-          <LuArrowUpDown className="ml-2 size-4" />
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "salesCount",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
+          Vendas
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
         </Button>
       );
     },
@@ -91,9 +107,10 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
           Preço
-          <LuArrowUpDown className="ml-2 size-4" />
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
         </Button>
       );
     },
@@ -108,9 +125,10 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
           Estoque
-          <LuArrowUpDown className="ml-2 size-4" />
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
         </Button>
       );
     },
@@ -137,9 +155,10 @@ export const columns: ColumnDef<ProductColumnProps>[] = [
       return (
         <Button
           variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="font-extrabold">
           Criação
-          <LuArrowUpDown className="ml-2 size-4" />
+          <LuArrowUpDown className="ml-2 size-4 font-extrabold" />
         </Button>
       );
     },

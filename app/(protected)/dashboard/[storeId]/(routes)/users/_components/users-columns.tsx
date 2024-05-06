@@ -17,14 +17,15 @@ export type UsersColumnProps = {
 export const columns: ColumnDef<UsersColumnProps>[] = [
   {
     accessorKey: "imageUrl",
-    header: "",
+    header: "Imagem",
     cell: ({ row }) => (
       <div className="relative size-7 rounded-full overflow-hidden">
         <Image
           src={row.original.imageUrl ? row.original.imageUrl : placeholder}
           fill
           alt="usuário"
-          className="w-full h-full object-cover"
+          className="object-cover"
+          sizes="(max-width: 3840px) 28px"
         />
       </div>
     ),

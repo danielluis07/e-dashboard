@@ -19,8 +19,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { UsersColumnProps } from "./users-columns";
-import { deleteProduct } from "@/actions/product/delete-product";
-import { FaCheckCircle } from "react-icons/fa";
 
 interface UsersCellActionProps {
   data: UsersColumnProps;
@@ -32,16 +30,8 @@ export const UsersCellAction = ({ data }: UsersCellActionProps) => {
   const router = useRouter();
   const params = useParams();
 
-  const onDelete = async () => {};
-
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={isPending}
-      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -56,9 +46,6 @@ export const UsersCellAction = ({ data }: UsersCellActionProps) => {
               router.push(`/dashboard/${params.storeId}/users/${data.id}`)
             }>
             <CiEdit className="mr-2 size-5" /> Informações
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <CiTrash className="mr-2 size-5" /> Deletar
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

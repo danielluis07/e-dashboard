@@ -31,6 +31,7 @@ import placeholder from "@/public/placeholder-logo.jpg";
 import { ReviewStar } from "../../_components/review-star";
 import { Rating } from "react-simple-star-rating";
 import { reply } from "@/actions/review/reply-review";
+import { Heading } from "@/components/ui/heading";
 
 type ReviewFormValues = z.infer<typeof ReviewSchema>;
 
@@ -82,29 +83,11 @@ export const ReviewForm = ({
     });
   };
 
-  const onDelete = () => {
-    startTransition(() => {});
-  };
-
   return (
-    <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={isPending}
-      />
-      <div className="flex items-center justify-end pt-10">
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          size="sm"
-          onClick={() => setOpen(true)}>
-          <CiTrash className="size-5" />
-        </Button>
-      </div>
+    <div className="pt-3">
+      <Heading title="Avaliação" description="Responda a essa avaliação" />
       <Separator className="my-3" />
-      <div className="mt-8 space-y-4 my-8">
+      <div className="mt-8 space-y-4 my-8 bg-gray-100 p-2 rounded-sm">
         <div className="flex items-center gap-x-3">
           <div className="relative size-10 rounded-full overflow-hidden">
             <Image
@@ -112,6 +95,7 @@ export const ReviewForm = ({
               fill
               alt="usuario"
               className="size-full object-cover"
+              sizes="(max-width: 3840px) 40px"
             />
           </div>
           <div>{name}</div>
@@ -147,6 +131,6 @@ export const ReviewForm = ({
           </Button>
         </form>
       </Form>
-    </>
+    </div>
   );
 };

@@ -4,8 +4,12 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: { storeId: string } }
+) {
   const body = await req.text();
   const signature = headers().get("Stripe-Signature");
 
@@ -36,19 +40,6 @@ export async function POST(req: Request) {
         where: { id: session.metadata?.orderId },
         data: {
           status: "PAID",
-          address: session.customer_details?.address
-            ? [
-                session.customer_details.address.line1,
-                session.customer_details.address.line2,
-                session.customer_details.address.city,
-                session.customer_details.address.state,
-                session.customer_details.address.postal_code,
-                session.customer_details.address.country,
-              ]
-                .filter(Boolean)
-                .join(", ")
-            : "",
-          phone: session.customer_details?.phone || "",
         },
         include: {
           orderItems: {
@@ -100,6 +91,12 @@ export async function POST(req: Request) {
           },
         });
       }
+
+      await pusherServer.trigger(params.storeId, "orders:new", {
+        id: Math.random().toString(),
+        message: "Pedido com pagamento confirmado!",
+        orderId: order.id,
+      });
     } catch (error: any) {
       console.error(`Failed to process order completion: ${error}`);
       return new NextResponse("Internal Server Error", { status: 500 });

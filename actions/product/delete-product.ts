@@ -19,7 +19,7 @@ export const deleteProduct = async (params: {
   }
 
   if (!params.productId) {
-    return { error: "É necessário o Id da cor" };
+    return { error: "É necessário o Id do produto" };
   }
 
   try {
@@ -32,6 +32,23 @@ export const deleteProduct = async (params: {
 
     if (!storeByUserId) {
       return { error: "Não autorizado!" };
+    }
+
+    const dependentOrderItems = await db.orderItem.findMany({
+      where: {
+        productId: params.productId,
+      },
+      select: {
+        id: true,
+        productId: true,
+      },
+    });
+
+    if (dependentOrderItems.length) {
+      return {
+        error:
+          "Certifique-se de deletar os pedidos relacionados a esse produto!",
+      };
     }
 
     await db.product.delete({

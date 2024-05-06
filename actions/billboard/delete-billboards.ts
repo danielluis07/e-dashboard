@@ -4,7 +4,10 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export const deleteBillboards = async (params: { storeId: string }) => {
+export const deleteBillboards = async (
+  params: { storeId: string },
+  billboardsIds: string[]
+) => {
   const myUser = await useCurrentUser();
 
   const myUserId = myUser?.id;
@@ -29,15 +32,17 @@ export const deleteBillboards = async (params: { storeId: string }) => {
 
     await db.billboard.deleteMany({
       where: {
-        storeId: params.storeId,
+        id: {
+          in: billboardsIds,
+        },
       },
     });
   } catch (error) {
     console.log(error);
-    return { error: "Erro ao deletar os banners" };
+    return { error: "Erro ao deletar o(s) banner(s)" };
   }
 
   revalidatePath(`/dashboard/${params.storeId}/billboards`);
 
-  return { success: "Banners deletados!" };
+  return { success: "Banner(s) deletado(s)!" };
 };

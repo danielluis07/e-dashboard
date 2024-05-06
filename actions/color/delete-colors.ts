@@ -4,7 +4,10 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export const deleteColors = async (params: { storeId: string }) => {
+export const deleteColors = async (
+  params: { storeId: string },
+  colorsIds: string[]
+) => {
   const myUser = await useCurrentUser();
 
   const myUserId = myUser?.id;
@@ -29,12 +32,14 @@ export const deleteColors = async (params: { storeId: string }) => {
 
     await db.color.deleteMany({
       where: {
-        storeId: params.storeId,
+        id: {
+          in: colorsIds,
+        },
       },
     });
   } catch (error) {
     console.log(error);
-    return { error: "Erro ao deletar as cores" };
+    return { error: "Erro ao deletar a(s) core(s)" };
   }
 
   revalidatePath(`/dashboard/${params.storeId}/colors`);

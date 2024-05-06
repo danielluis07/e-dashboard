@@ -159,7 +159,12 @@ export const LoginForm = () => {
                           showPassword && "hidden",
                           "absolute right-2 top-1"
                         )}>
-                        <FaRegEye className="text-lg" />
+                        <FaRegEye
+                          className={cn(
+                            isPending && "text-gray-400",
+                            "text-lg"
+                          )}
+                        />
                       </div>
                       <div
                         onClick={() => setShowPassword(!showPassword)}
@@ -167,7 +172,12 @@ export const LoginForm = () => {
                           !showPassword && "hidden",
                           "absolute right-2 top-1"
                         )}>
-                        <FaRegEyeSlash className="text-lg" />
+                        <FaRegEyeSlash
+                          className={cn(
+                            isPending && "text-gray-400",
+                            "text-lg"
+                          )}
+                        />
                       </div>
                       <Button
                         size="sm"

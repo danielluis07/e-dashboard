@@ -40,16 +40,11 @@ export async function PATCH(
       address1,
       address2,
       city,
+      phone,
       country,
       postalCode,
       state,
     } = body;
-
-    if (!isTwoFactorEnabled) {
-      return new NextResponse("No info about two factor authentication", {
-        status: 400,
-      });
-    }
 
     if (!params.storeId) {
       return new NextResponse("Store id is required", { status: 400 });
@@ -76,6 +71,7 @@ export async function PATCH(
         address1,
         address2,
         city,
+        phone,
         country,
         postalCode,
         state,

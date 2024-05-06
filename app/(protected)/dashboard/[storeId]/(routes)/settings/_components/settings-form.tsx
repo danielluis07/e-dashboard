@@ -83,30 +83,12 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
     });
   };
 
-  const onDelete = async () => {};
-
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={isPending}
-      />
-      <div className="flex items-center justify-between py-5">
-        <Heading
-          title="Configurações"
-          description="Gerencie suas preferências"
-        />
-        <Button
-          disabled={isPending}
-          variant="destructive"
-          size="icon"
-          onClick={() => setOpen(true)}>
-          <CiTrash className="size-5" />
-        </Button>
+      <div className="pt-5">
+        <Heading title="Configurações" />
       </div>
-      <Separator />
+      <Separator className="my-4" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit, onInvalid)}>
           <div className="space-y-4 mb-5">
@@ -115,7 +97,7 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="storeName"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Nome da Loja</FormLabel>
+                  <FormLabel className="font-bold">Nome da Loja</FormLabel>
                   <FormControl>
                     <Input disabled={isPending} {...field} />
                   </FormControl>
@@ -128,7 +110,7 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Imagem de fundo</FormLabel>
+                  <FormLabel className="font-bold">Imagem de fundo</FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value ? [field.value] : []}
@@ -146,7 +128,7 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="myUserName"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Seu Nome</FormLabel>
+                  <FormLabel className="font-bold">Seu Nome</FormLabel>
                   <FormControl>
                     <Input disabled={isPending} {...field} />
                   </FormControl>
@@ -159,7 +141,7 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="email"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Seu email</FormLabel>
+                  <FormLabel className="font-bold">Seu email</FormLabel>
                   <FormControl>
                     <Input disabled={isPending} {...field} />
                   </FormControl>
@@ -172,7 +154,9 @@ export const SettingsForm = ({ initialData }: SettingsFormProps) => {
               name="isTwoFactorEnabled"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center gap-x-3 space-y-0 py-5">
-                  <FormLabel>Identificação por dois fatores</FormLabel>
+                  <FormLabel className="font-bold">
+                    Identificação por dois fatores
+                  </FormLabel>
                   <FormControl>
                     <Switch
                       checked={field.value}

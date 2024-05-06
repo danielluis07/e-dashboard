@@ -12,9 +12,6 @@ import { getGraphRevenue } from "@/actions/get-graph-revenue";
 import { getStockCount } from "@/actions/get-stock-count";
 import { getUsersCount } from "@/actions/get-users-count";
 import { convertCentsToReal } from "@/lib/utils";
-import { ClipLoader } from "react-spinners";
-import { BounceLoader } from "react-spinners";
-import { LoaderSpinner } from "@/components/loader-spinner";
 
 interface DashboardPageProps {
   params: {
@@ -30,7 +27,7 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
   const usersCount = await getUsersCount(params.storeId);
 
   return (
-    <div className="h-full xl:h-screen xl:overflow-auto pl-3 pb-3 pr-3 pt-16">
+    <div className="h-full xl:h-screen xl:overflow-auto pl-3 pb-3 pr-3 pt-16 xl:pt-5">
       <div className="space-y-4 p-8 pt-6">
         <Heading title="Dashboard" description="Resumo das vendas" />
         <Separator />

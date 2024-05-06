@@ -24,10 +24,8 @@ import { FaCheckCircle } from "react-icons/fa";
 type UpdatePasswordFormValues = z.infer<typeof UpdatePasswordSchema>;
 
 export const UpdatePasswordForm = () => {
-  const [isUnchanged, setIsUnchanged] = useState(true);
   const params = useParams<{ storeId: string }>();
   const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
   const form = useForm<UpdatePasswordFormValues>({
     resolver: zodResolver(UpdatePasswordSchema),
     defaultValues: {
@@ -35,6 +33,9 @@ export const UpdatePasswordForm = () => {
       newPassword: "",
     },
   });
+
+  const password = form.watch("password", "");
+  const newPassword = form.watch("newPassword", "");
 
   const onInvalid = (errors: any) => console.error(errors);
 
@@ -65,7 +66,7 @@ export const UpdatePasswordForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Senha atual</FormLabel>
+                <FormLabel className="font-bold">Senha atual</FormLabel>
                 <FormControl>
                   <Input disabled={isPending} {...field} type="password" />
                 </FormControl>
@@ -78,7 +79,7 @@ export const UpdatePasswordForm = () => {
             name="newPassword"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Senha nova</FormLabel>
+                <FormLabel className="font-bold">Senha nova</FormLabel>
                 <FormControl>
                   <Input disabled={isPending} {...field} type="password" />
                 </FormControl>
@@ -87,7 +88,10 @@ export const UpdatePasswordForm = () => {
             )}
           />
         </div>
-        <Button disabled={isPending} className="ml-auto" type="submit">
+        <Button
+          disabled={isPending || !password || !newPassword}
+          className="ml-auto"
+          type="submit">
           Alterar senha
         </Button>
       </form>

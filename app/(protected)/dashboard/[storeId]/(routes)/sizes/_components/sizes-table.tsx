@@ -39,18 +39,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
 
-interface OrdersDataTableProps<TData, TValue> {
+interface SizesDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
   filters?: Filters;
 }
 
-export function OrdersDataTable<TData, TValue>({
+export function SizesDataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-}: OrdersDataTableProps<TData, TValue>) {
+}: SizesDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -112,6 +112,16 @@ export function OrdersDataTable<TData, TValue>({
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
                 .map((column) => {
+                  let renderedColumnId = column.id;
+
+                  if (column.id === "name") {
+                    renderedColumnId = "Nome";
+                  } else if (column.id === "value") {
+                    renderedColumnId = "Valor";
+                  } else if (column.id === "sum") {
+                    renderedColumnId = "Total";
+                  }
+
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -120,7 +130,7 @@ export function OrdersDataTable<TData, TValue>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }>
-                      {column.id}
+                      {renderedColumnId}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -135,9 +145,7 @@ export function OrdersDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      className="text-center font-extrabold">
+                    <TableHead key={header.id} className="font-extrabold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -156,29 +164,14 @@ export function OrdersDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => {
-                    console.log(cell);
-                    let cellStyle = "";
-                    if (cell.column.id === "status") {
-                      if (cell.getValue() === "Aguardando Pagamento") {
-                        cellStyle =
-                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold"; // Style for 'Sim'
-                      } else if (cell.getValue() === "Pago") {
-                        cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Não'
-                      }
-                    }
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={cn("text-center", cellStyle)}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    );
-                  })}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (

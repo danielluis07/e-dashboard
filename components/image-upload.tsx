@@ -51,9 +51,10 @@ export const ImageUpload = ({
             </div>
             <Image
               fill
-              className="w-full h-full object-cover"
+              className="object-cover"
               alt="image"
               src={url}
+              sizes="(max-width: 3840px) 200px"
             />
           </div>
         ))}

@@ -3,6 +3,7 @@
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { IoMenu } from "react-icons/io5";
 import { cn } from "@/lib/utils";
+import { useTransition } from "react";
 import { useParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { FaImage } from "react-icons/fa";
@@ -17,14 +18,27 @@ import { LogoutButton } from "@/components/auth/logout-button";
 import { CiLogout } from "react-icons/ci";
 import { FaHouse } from "react-icons/fa6";
 import { useState } from "react";
+import { ExitModal } from "@/modals/exit-modal";
+import { logout } from "@/actions/logout";
+import { toast } from "sonner";
 
 export const MobileNavbar = () => {
   const [isSheetOpen, setSheetOpen] = useState(false);
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const params = useParams();
   const isConfigActive = pathname === `/${params.storeId}/settings`;
   const isUsersActive = pathname === `/dashboard/${params.storeId}/users`;
   const isOrdersActive = pathname === `/dashboard/${params.storeId}/orders`;
+
+  const onClick = () => {
+    startTransition(() => {
+      logout().catch((error) => {
+        console.log(error);
+        toast.error("Ocorreu um erro ao tentar sair");
+      });
+    });
+  };
 
   const routes = [
     {
@@ -65,6 +79,7 @@ export const MobileNavbar = () => {
 
   return (
     <div>
+      <ExitModal exited={isPending} />
       <Sheet open={isSheetOpen} onOpenChange={setSheetOpen}>
         <SheetTrigger onClick={() => setSheetOpen(true)}>
           <IoMenu className="text-4xl" />
@@ -76,7 +91,7 @@ export const MobileNavbar = () => {
                 <div
                   onClick={handleLinkClick}
                   className="flex items-center justify-between font-medium text-muted-foreground transition-colors hover:text-fuchsia-500">
-                  <div>Início</div>
+                  <p>Início</p>
                   <div>
                     <FaHouse />
                   </div>
@@ -95,7 +110,7 @@ export const MobileNavbar = () => {
                         ? "text-fuchsia-500 dark:text-white"
                         : "text-muted-foreground"
                     )}>
-                    <div>{route.label}</div>
+                    <p>{route.label}</p>
                     <div className="text-lg">{route.icon}</div>
                   </div>
                 </Link>
@@ -112,10 +127,8 @@ export const MobileNavbar = () => {
                         : "text-muted-foreground",
                       "flex items-center justify-between font-medium transition-colors hover:text-fuchsia-500"
                     )}>
-                    <div>Usuários</div>
-                    <div>
-                      <FaUser />
-                    </div>
+                    <p>Usuários</p>
+                    <FaUser />
                   </div>
                 </Link>
               </div>
@@ -130,10 +143,8 @@ export const MobileNavbar = () => {
                         : "text-muted-foreground",
                       "flex items-center justify-between font-medium transition-colors hover:text-fuchsia-500"
                     )}>
-                    <div>Pedidos</div>
-                    <div>
-                      <FiPackage />
-                    </div>
+                    <p>Pedidos</p>
+                    <FiPackage />
                   </div>
                 </Link>
               </div>
@@ -149,22 +160,18 @@ export const MobileNavbar = () => {
                         : "text-muted-foreground",
                       "flex items-center justify-between font-medium transition-colors hover:text-fuchsia-500"
                     )}>
-                    <div>Configurações</div>
-                    <div>
-                      <MdOutlineSettings className="text-xl" />
-                    </div>
+                    <p>Configurações</p>
+                    <MdOutlineSettings className="text-xl" />
                   </div>
                 </Link>
               </div>
               <div>
-                <LogoutButton>
-                  <div className="flex items-center justify-between text-muted-foreground font-medium transition-colors hover:text-fuchsia-500">
-                    <div>Sair</div>
-                    <div>
-                      <CiLogout className="text-xl" />
-                    </div>
-                  </div>
-                </LogoutButton>
+                <div
+                  onClick={onClick}
+                  className="flex items-center justify-between text-muted-foreground font-medium cursor-pointer transition-colors hover:text-fuchsia-500 hover:bg-fuchsia-100">
+                  <p>Sair</p>
+                  <CiLogout className="text-xl" />
+                </div>
               </div>
             </div>
           </div>

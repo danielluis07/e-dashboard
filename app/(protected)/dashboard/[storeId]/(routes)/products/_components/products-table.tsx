@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
+import { DeleteProductsButton } from "./delete-products";
 
 interface ProductsDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -45,6 +46,12 @@ interface ProductsDataTableProps<TData, TValue> {
   searchKey: string;
   filters?: Filters;
 }
+
+type FilteredProducIds = {
+  productsIds: Array<{
+    id: string;
+  }>;
+};
 
 export function ProductsDataTable<TData, TValue>({
   columns,
@@ -83,6 +90,11 @@ export function ProductsDataTable<TData, TValue>({
     },
   });
 
+  const selectedProductsIds = table
+    .getFilteredSelectedRowModel()
+    //@ts-ignore
+    .rows.map((item) => item.original.id);
+
   return (
     <>
       <div className="flex items-center justify-between py-4">
@@ -94,41 +106,70 @@ export function ProductsDataTable<TData, TValue>({
           }
           className="w-1/2"
         />
-        {table.getRowModel().rows?.length ? (
-          <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
-            <DropdownMenuTrigger asChild>
-              <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
-                <div>Colunas</div>
-                <FaChevronDown
-                  className={cn(
-                    isOpen && "-rotate-180",
-                    "transition-all duration-300"
-                  )}
-                />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }>
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <div></div>
-        )}
+        <div className="flex items-center space-x-5">
+          {table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <DeleteProductsButton productsIds={selectedProductsIds} />
+          )}
+          {table.getRowModel().rows?.length && (
+            <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
+              <DropdownMenuTrigger asChild>
+                <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
+                  <div>Colunas</div>
+                  <FaChevronDown
+                    className={cn(
+                      isOpen && "-rotate-180",
+                      "transition-all duration-300"
+                    )}
+                  />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    let renderedColumnId = column.id;
+
+                    if (column.id === "salesCount") {
+                      renderedColumnId = "Vendas";
+                    } else if (column.id === "number") {
+                      renderedColumnId = "Número";
+                    } else if (column.id === "name") {
+                      renderedColumnId = "Nome";
+                    } else if (column.id === "isArchived") {
+                      renderedColumnId = "Arquivado";
+                    } else if (column.id === "isFeatured") {
+                      renderedColumnId = "Destaque";
+                    } else if (column.id === "price") {
+                      renderedColumnId = "Preço";
+                    } else if (column.id === "category") {
+                      renderedColumnId = "Categoria";
+                    } else if (column.id === "sotck") {
+                      renderedColumnId = "Estoque";
+                    } else if (column.id === "color") {
+                      renderedColumnId = "Cor";
+                    } else if (column.id === "createdAt") {
+                      renderedColumnId = "Criação";
+                    } else if (column.id === "actions") {
+                      renderedColumnId = "Ações";
+                    }
+
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }>
+                        {renderedColumnId}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -137,7 +178,9 @@ export function ProductsDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="text-center">
+                    <TableHead
+                      key={header.id}
+                      className="text-center font-extrabold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -156,14 +199,24 @@ export function ProductsDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="text-center">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell) => {
+                    let cellStyle = "";
+
+                    if (cell.getValue() === "---") {
+                      cellStyle = "flex justify-center";
+                    }
+
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={cn(cellStyle, "text-center")}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (

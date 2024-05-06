@@ -39,18 +39,18 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
 
-interface OrdersDataTableProps<TData, TValue> {
+interface UsersDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
   filters?: Filters;
 }
 
-export function OrdersDataTable<TData, TValue>({
+export function UsersDataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-}: OrdersDataTableProps<TData, TValue>) {
+}: UsersDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -135,9 +135,7 @@ export function OrdersDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      className="text-center font-extrabold">
+                    <TableHead key={header.id} className="font-extrabold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -157,21 +155,8 @@ export function OrdersDataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => {
-                    console.log(cell);
-                    let cellStyle = "";
-                    if (cell.column.id === "status") {
-                      if (cell.getValue() === "Aguardando Pagamento") {
-                        cellStyle =
-                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold"; // Style for 'Sim'
-                      } else if (cell.getValue() === "Pago") {
-                        cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Não'
-                      }
-                    }
                     return (
-                      <TableCell
-                        key={cell.id}
-                        className={cn("text-center", cellStyle)}>
+                      <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -192,10 +177,6 @@ export function OrdersDataTable<TData, TValue>({
             )}
           </TableBody>
         </Table>
-      </div>
-      <div className="flex-1 text-sm text-muted-foreground mt-2">
-        {table.getFilteredSelectedRowModel().rows.length} de{" "}
-        {table.getFilteredRowModel().rows.length} colunas(s) selecionadas.
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button

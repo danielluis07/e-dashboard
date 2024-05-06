@@ -30,6 +30,7 @@ const ProductsPage = async ({ params }: { params: { storeId: string } }) => {
     isArchived: item.isArchived ? "Sim" : "Não",
     stock: item.stock,
     isNew: item.isNew,
+    salesCount: item.salesCount,
     price: convertCentsToReal(item.price),
     category: item.category.name,
     sizes: item.sizes,

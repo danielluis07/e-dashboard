@@ -93,7 +93,7 @@ export const EditColorForm = ({ initialData }: EditColorFormProps) => {
         loading={isPending}
       />
       <div className="flex items-center justify-between pt-10">
-        <Heading title="Editar cor" description="Editar uma cor" />
+        <Heading title="Editar cor" />
         {initialData && (
           <Button
             disabled={isPending}
@@ -104,7 +104,7 @@ export const EditColorForm = ({ initialData }: EditColorFormProps) => {
           </Button>
         )}
       </div>
-      <Separator />
+      <Separator className="my-5" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

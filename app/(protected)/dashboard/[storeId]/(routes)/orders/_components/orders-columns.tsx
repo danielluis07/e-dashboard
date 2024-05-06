@@ -7,8 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 export type OrdersColumnsProps = {
   id: string;
   storeId: string;
-  phone: string;
-  address: string;
+  phone: string | null;
   status: string;
   totalPrice: string;
   products: string;

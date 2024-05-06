@@ -38,19 +38,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { FaChevronDown } from "react-icons/fa";
+import { DeleteBillboardsButton } from "./delete-billboards";
 
-interface OrdersDataTableProps<TData, TValue> {
+interface BillboardDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   searchKey: string;
   filters?: Filters;
 }
 
-export function OrdersDataTable<TData, TValue>({
+export function BillboardDataTable<TData, TValue>({
   columns,
   data,
   searchKey,
-}: OrdersDataTableProps<TData, TValue>) {
+}: BillboardDataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -83,6 +84,11 @@ export function OrdersDataTable<TData, TValue>({
     },
   });
 
+  const selectedBillboardsIds = table
+    .getFilteredSelectedRowModel()
+    //@ts-ignore
+    .rows.map((item) => item.original.id);
+
   return (
     <>
       <div className="flex items-center justify-between py-4">
@@ -94,39 +100,54 @@ export function OrdersDataTable<TData, TValue>({
           }
           className="w-1/2"
         />
-        {table.getRowModel().rows?.length && (
-          <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
-            <DropdownMenuTrigger asChild>
-              <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
-                <div>Colunas</div>
-                <FaChevronDown
-                  className={cn(
-                    isOpen && "-rotate-180",
-                    "transition-all duration-300"
-                  )}
-                />
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }>
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
+        <div className="flex items-center space-x-5">
+          {table.getFilteredSelectedRowModel().rows.length > 0 && (
+            <DeleteBillboardsButton billboardsIds={selectedBillboardsIds} />
+          )}
+          {table.getRowModel().rows?.length && (
+            <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
+              <DropdownMenuTrigger asChild>
+                <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
+                  <div>Colunas</div>
+                  <FaChevronDown
+                    className={cn(
+                      isOpen && "-rotate-180",
+                      "transition-all duration-300"
+                    )}
+                  />
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    let renderedColumnId = column.id;
+
+                    if (column.id === "label") {
+                      renderedColumnId = "Nome";
+                    } else if (column.id === "createdAt") {
+                      renderedColumnId = "Data";
+                    } else if (column.id === "actions") {
+                      renderedColumnId = "Ações";
+                    }
+
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }>
+                        {renderedColumnId}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
       </div>
       <div className="rounded-md border">
         <Table>
@@ -135,9 +156,7 @@ export function OrdersDataTable<TData, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead
-                      key={header.id}
-                      className="text-center font-extrabold">
+                    <TableHead key={header.id} className="font-extrabold">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -156,29 +175,14 @@ export function OrdersDataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => {
-                    console.log(cell);
-                    let cellStyle = "";
-                    if (cell.column.id === "status") {
-                      if (cell.getValue() === "Aguardando Pagamento") {
-                        cellStyle =
-                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold"; // Style for 'Sim'
-                      } else if (cell.getValue() === "Pago") {
-                        cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Não'
-                      }
-                    }
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        className={cn("text-center", cellStyle)}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    );
-                  })}
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (

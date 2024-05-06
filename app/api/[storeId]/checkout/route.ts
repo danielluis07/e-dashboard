@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 
 interface ProductCheckoutInfo {
   productId: string;
@@ -86,6 +87,13 @@ export async function POST(
     data: {
       storeId: params.storeId,
       userId: userId,
+      address1: user.address1,
+      address2: user.address2,
+      city: user.city,
+      country: user.country,
+      phone: user.phone,
+      postalCode: user.postalCode,
+      state: user.state,
       orderItems: {
         create: products.map((product: ProductCheckoutInfo) => ({
           productId: product.productId,
@@ -106,6 +114,12 @@ export async function POST(
     metadata: {
       orderId: order.id,
     },
+  });
+
+  await pusherServer.trigger(params.storeId, "orders:new", {
+    id: Math.random().toString(),
+    message: "Você recebeu um novo pedido! Pagamento não confirmado",
+    orderId: order.id,
   });
 
   return NextResponse.json({ url: session.url }, { headers: corsHeaders });

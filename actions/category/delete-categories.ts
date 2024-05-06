@@ -4,7 +4,10 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export const deleteCategories = async (params: { storeId: string }) => {
+export const deleteCategories = async (
+  params: { storeId: string },
+  categoriesIds: string[]
+) => {
   const myUser = await useCurrentUser();
 
   const myUserId = myUser?.id;
@@ -27,9 +30,26 @@ export const deleteCategories = async (params: { storeId: string }) => {
       return { error: "Não autorizado!" };
     }
 
+    const dependentProducts = await db.product.findMany({
+      where: {
+        categoryId: {
+          in: categoriesIds,
+        },
+      },
+    });
+
+    if (dependentProducts.length) {
+      return {
+        error:
+          "Certifique-se de deletar os produtos relacionados a essa(s) categoria(s)!",
+      };
+    }
+
     await db.category.deleteMany({
       where: {
-        storeId: params.storeId,
+        id: {
+          in: categoriesIds,
+        },
       },
     });
   } catch (error) {

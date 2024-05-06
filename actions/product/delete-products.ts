@@ -4,7 +4,10 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
-export const deleteProducts = async (params: { storeId: string }) => {
+export const deleteProducts = async (
+  params: { storeId: string },
+  productsIds: string[]
+) => {
   const myUser = await useCurrentUser();
 
   const myUserId = myUser?.id;
@@ -13,6 +16,10 @@ export const deleteProducts = async (params: { storeId: string }) => {
     return {
       error: "Não autorizado!",
     };
+  }
+
+  if (!productsIds || !productsIds.length) {
+    return { error: "Nenhuma Id fornecida!" };
   }
 
   try {
@@ -27,9 +34,28 @@ export const deleteProducts = async (params: { storeId: string }) => {
       return { error: "Não autorizado!" };
     }
 
+    const dependentOrderItems = await db.orderItem.findMany({
+      where: {
+        productId: { in: productsIds },
+      },
+      select: {
+        id: true,
+        productId: true,
+      },
+    });
+
+    if (dependentOrderItems.length) {
+      return {
+        error:
+          "Certifique-se de deletar os pedidos relacionados a esse(s) produto(s)!",
+      };
+    }
+
     await db.product.deleteMany({
       where: {
-        storeId: params.storeId,
+        id: {
+          in: productsIds,
+        },
       },
     });
   } catch (error) {
@@ -39,5 +65,5 @@ export const deleteProducts = async (params: { storeId: string }) => {
 
   revalidatePath(`/dashboard/${params.storeId}/products`);
 
-  return { success: "Produtos deletados!" };
+  return { success: "Produto(s) deletado(s)!" };
 };

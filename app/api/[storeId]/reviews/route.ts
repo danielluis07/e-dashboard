@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { pusherServer } from "@/lib/pusher";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -83,6 +84,12 @@ export async function POST(
         averageRating,
         totalReviews: reviews.length,
       },
+    });
+
+    await pusherServer.trigger(params.storeId, "reviews:new", {
+      id: Math.random().toString(),
+      message: "Você recebeu uma nova avaliação!",
+      reviewId: review.id,
     });
 
     return NextResponse.json(review, { headers: corsHeaders });

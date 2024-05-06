@@ -65,9 +65,9 @@ export const CreateColorForm = ({ initialData }: CreateColorFormProps) => {
   return (
     <>
       <div className="flex items-center justify-between pt-10">
-        <Heading title="Criar cor" description="Adicionar nova cor" />
+        <Heading title="Criar cor" />
       </div>
-      <Separator />
+      <Separator className="my-5" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
