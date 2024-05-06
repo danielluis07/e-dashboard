@@ -2,13 +2,16 @@ import PusherServer from "pusher";
 import PusherClient from "pusher-js";
 
 export const pusherServer = new PusherServer({
-  appId: "1797571",
-  key: "3d2a0936cc767d25f2f3",
-  secret: "b649ea8120f7546c23e9",
+  appId: process.env.PUSHER_APP_ID!,
+  key: process.env.NEXT_PUBLIC_PUSHER_APP_KEY!, // Note: Corrected access to public key
+  secret: process.env.PUSHER_SECRET!,
   cluster: "sa1",
   useTLS: true,
 });
 
-export const pusherClient = new PusherClient("3d2a0936cc767d25f2f3", {
-  cluster: "sa1",
-});
+export const pusherClient = new PusherClient(
+  process.env.NEXT_PUBLIC_PUSHER_APP_KEY!,
+  {
+    cluster: "sa1",
+  }
+);

@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -53,7 +53,8 @@ export const ReviewForm = ({
   const params = useParams<{ storeId: string; reviewId: string }>();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [open, setOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   const form = useForm<ReviewFormValues>({
     resolver: zodResolver(ReviewSchema),
@@ -82,6 +83,14 @@ export const ReviewForm = ({
       });
     });
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <div className="pt-3">
