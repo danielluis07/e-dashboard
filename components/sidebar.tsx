@@ -15,6 +15,7 @@ import { Notification } from "@/hooks/use-notifications";
 import { toast } from "sonner";
 import { MdOutlineRateReview } from "react-icons/md";
 import { Notifications } from "./notifications";
+import { FiPackage } from "react-icons/fi";
 
 interface SideBarProps {
   name: string | null | undefined;
@@ -30,20 +31,38 @@ export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
   useEffect(() => {
     pusherClient.subscribe(params.storeId);
 
-    const review = (data: Notification) => {
+    const newReview = (data: Notification) => {
       notifications.addItem(data);
       toast.success(data.message, {
         icon: <MdOutlineRateReview className="text-sky-500" />,
       });
     };
 
-    pusherClient.bind("reviews:new", review);
+    const newOrder = (data: Notification) => {
+      notifications.addItem(data);
+      toast.success(data.message, {
+        icon: <FiPackage className="text-yellow-500" />,
+      });
+    };
+
+    const confirmedOrder = (data: Notification) => {
+      notifications.addItem(data);
+      toast.success(data.message, {
+        icon: <FiPackage className="text-green-500" />,
+      });
+    };
+
+    pusherClient.bind("reviews:new", newReview);
+    pusherClient.bind("orders:new", newOrder);
+    pusherClient.bind("orders:confirmed", confirmedOrder);
 
     return () => {
       pusherClient.unsubscribe(params.storeId);
       pusherClient.unbind("reviews:new");
+      pusherClient.unbind("orders:new");
+      pusherClient.unbind("orders:confirmed");
     };
-  }, [notifications]);
+  }, [params.storeId, notifications]);
 
   return (
     <div

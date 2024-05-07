@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { Notification } from "@/hooks/use-notifications";
 import { pusherServer } from "@/lib/pusher";
 
 const corsHeaders = {
@@ -90,6 +91,16 @@ export async function POST(
       id: Math.random().toString(),
       message: "Você recebeu uma nova avaliação!",
       reviewId: review.id,
+      createdAt: new Date(),
+      type: "review",
+    } as Notification);
+
+    console.log({
+      id: Math.random().toString(),
+      message: "Você recebeu uma nova avaliação!",
+      reviewId: review.id,
+      createdAt: new Date(),
+      type: "review",
     });
 
     return NextResponse.json(review, { headers: corsHeaders });

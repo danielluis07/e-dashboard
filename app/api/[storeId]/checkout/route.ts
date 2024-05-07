@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-
+import { Notification } from "@/hooks/use-notifications";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { pusherServer } from "@/lib/pusher";
@@ -118,9 +118,12 @@ export async function POST(
 
   await pusherServer.trigger(params.storeId, "orders:new", {
     id: Math.random().toString(),
-    message: "Você recebeu um novo pedido! Pagamento não confirmado",
+    message: "Você recebeu um novo pedido!",
     orderId: order.id,
-  });
+    orderNumber: order.number,
+    createdAt: new Date(),
+    type: "order",
+  } as Notification);
 
   return NextResponse.json({ url: session.url }, { headers: corsHeaders });
 }

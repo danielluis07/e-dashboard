@@ -17,42 +17,38 @@ enum OrderStatus {
   CANCELED
 }
 
-enum NotificationType {
-  PURCHASE
-  REVIEW
-  REVIEW_REPLY
-  ORDER_UPDATE
-  PAYMENT_RECEIVED
+enum LogisticStatus {
+  WAITING_FOR_PAYMENT
+  PREPARING
+  SENT
+  DELIVERED
 }
 
-
 model MyUser {
-  id                    String    @id @default(cuid())
+  id                    String                    @id @default(cuid())
   name                  String?
-  email                 String?   @unique
+  email                 String?                   @unique
   emailVerified         DateTime?
   image                 String?
-  notifications         Notification[]  // Relation to Notification model
   password              String?
   accounts              Account[]
-  isTwoFactorEnabled    Boolean @default(false)
+  isTwoFactorEnabled    Boolean                   @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 }
 
 model User {
-  id                    String    @id @default(uuid())
-  username              String?   @unique
-  email                 String?   @unique
-  // notifications         Notification[]  // Relation to Notification model
+  id                    String                  @id @default(uuid())
+  username              String?                 @unique
+  email                 String?                 @unique
   name                  String?
   password              String?
   imageUrl              String?
   imageName             String?
-  stores                StoreUser[]   @relation("UserToStore")
+  stores                StoreUser[]             @relation("UserToStore")
   orders                Order[]   
-  reviews               Review[]  @relation("UserToReview")
+  reviews               Review[]                @relation("UserToReview")
   twoFactorConfirmation TwoFactorConfirmation?
-  isTwoFactorEnabled    Boolean @default(false)
+  isTwoFactorEnabled    Boolean                 @default(false)
   accounts              Account[]
   image                 String?
   emailVerified         DateTime?
@@ -63,8 +59,8 @@ model User {
   phone                 String?
   postalCode            String?
   country               String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
 }
 
 model StoreUser {
@@ -81,18 +77,18 @@ model StoreUser {
 }
 
 model Store {
-  id                    String  @id @default(uuid())
+  id                    String      @id @default(uuid())
   myUserId              String
   name                  String
   billboards            Billboard[] @relation("StoreToBillboard")
-  categories            Category[] @relation("StoreToCategory")
-  sizes                 Size[]     @relation("StoreToSize")
+  categories            Category[]  @relation("StoreToCategory")
+  sizes                 Size[]      @relation("StoreToSize")
   colors                Color[]     @relation("StoreToColor")
-  products              Product[]  @relation("StoreToProduct")
+  products              Product[]   @relation("StoreToProduct")
   orders                Order[]     @relation("StoreToOrder")
   users                 StoreUser[] @relation("UserToStore")
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
 }
 
 model Account {
@@ -136,21 +132,21 @@ model PasswordResetToken {
 }
 
 model TwoFactorToken {
-  id                    String @id @default(cuid())
+  id                    String    @id @default(cuid())
   email                 String
-  token                 String @unique
+  token                 String    @unique
   expires               DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorConfirmation {
-  id                    String @id @default(cuid())
-  myUserId              String? @unique
-  userId                String? @unique // Add @unique attribute to ensure uniqueness
+  id                    String    @id @default(cuid())
+  myUserId              String?   @unique
+  userId                String?   @unique // Add @unique attribute to ensure uniqueness
 
-  myUser                MyUser? @relation(fields: [myUserId], references: [id], onDelete: Cascade)
-  user                  User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+  myUser                MyUser?   @relation(fields: [myUserId], references: [id], onDelete: Cascade)
+  user                  User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
 }
 
@@ -169,28 +165,28 @@ model Billboard {
 }
 
 model Image {
-  id                    String   @id @default(uuid())
-  productId             String   // Foreign Key to Product
-  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  url                   String   // URL of the image
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                    String    @id @default(uuid())
+  productId             String    // Foreign Key to Product
+  product               Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url                   String    // URL of the image
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
 
   @@index([productId])
 }
 
 model Category {
-  id                    String      @id @default(uuid())
-  storeId               String      // Foreign Key to Store
-  store                 Store       @relation("StoreToCategory", fields: [storeId], references: [id])
-  billboardId           String?      // Foreign Key to Billboard
-  billboard             Billboard?   @relation(fields: [billboardId], references: [id])
-  products              Product[]   @relation("CategoryToProduct")
+  id                    String        @id @default(uuid())
+  storeId               String        // Foreign Key to Store
+  store                 Store         @relation("StoreToCategory", fields: [storeId], references: [id])
+  billboardId           String?       // Foreign Key to Billboard
+  billboard             Billboard?    @relation(fields: [billboardId], references: [id])
+  products              Product[]     @relation("CategoryToProduct")
   name                  String
   value                 String
   imageUrl              String?
-  createdAt             DateTime    @default(now())
-  updatedAt             DateTime    @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
 
   @@index([storeId])
   @@index([billboardId])
@@ -259,37 +255,37 @@ model ProductSize {
 }
 
 model Product {
-  id                    String          @id @default(uuid())
-  number                Int             @default(autoincrement())
-  salesCount            Int             @default(0)
-  storeId               String          // Foreign Key to Store
-  store                 Store           @relation("StoreToProduct", fields: [storeId], references: [id])
-  categoryId            String          // Foreign Key to Category
-  category              Category        @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  id                    String            @id @default(uuid())
+  number                Int               @default(autoincrement())
+  salesCount            Int               @default(0)
+  storeId               String            // Foreign Key to Store
+  store                 Store             @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId            String            // Foreign Key to Category
+  category              Category          @relation("CategoryToProduct", fields: [categoryId], references: [id])
   name                  String
   productSizes          ProductSize[]
-  description           String          @db.VarChar(500)
-  details               String?          @db.VarChar(1000)
+  description           String            @db.VarChar(500)
+  details               String?           @db.VarChar(1000)
   price                 Int
-  isNew                 Boolean         @default(false)
-  isFeatured            Boolean         @default(false)
-  isArchived            Boolean         @default(false)
-  reviews               Review[]        @relation // Establishing the relationship with the Review model
-  sizeId                String?         // Foreign Key to Size
-  discountPercentage    Float?          @default(0)
-  discountAbsolute      Int?            @default(0)
+  isNew                 Boolean           @default(false)
+  isFeatured            Boolean           @default(false)
+  isArchived            Boolean           @default(false)
+  reviews               Review[]          @relation // Establishing the relationship with the Review model
+  sizeId                String?           // Foreign Key to Size
+  discountPercentage    Float?            @default(0)
+  discountAbsolute      Int?              @default(0)
   discountStartDate     DateTime?       
   discountEndDate       DateTime?
-  sizes                 Size[]          @relation("ProductToSize")
-  colorId               String?          // Foreign Key to Color
-  stock                 Int             @default(0)
-  averageRating         Float?          @default(0)
-  totalReviews          Int             @default(0)
-  color                 Color?          @relation(fields: [colorId], references: [id])
-  images                Image[]         // Relation to Image model
-  orderItems            OrderItem[]     // Relation to Order model
-  createdAt             DateTime        @default(now())
-  updatedAt             DateTime        @updatedAt
+  sizes                 Size[]            @relation("ProductToSize")
+  colorId               String?           // Foreign Key to Color
+  stock                 Int               @default(0)
+  averageRating         Float?            @default(0)
+  totalReviews          Int               @default(0)
+  color                 Color?            @relation(fields: [colorId], references: [id])
+  images                Image[]           // Relation to Image model
+  orderItems            OrderItem[]       // Relation to Order model
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
 
   @@index([storeId])
   @@index([categoryId])
@@ -321,19 +317,20 @@ model Product {
 
 
 model Order {
-  id                    String    @id @default(uuid())
-  number                Int       @default(autoincrement())      
-  storeId               String    // Foreign Key to Store
-  store                 Store     @relation("StoreToOrder", fields: [storeId], references: [id])
+  id                    String          @id @default(uuid())
+  number                Int             @default(autoincrement())      
+  storeId               String          // Foreign Key to Store
+  store                 Store           @relation("StoreToOrder", fields: [storeId], references: [id])
   userId                String
-  user                  User      @relation(fields: [userId], references: [id])
-  orderItems            OrderItem[] // Relation to OrderItem model
-  status                OrderStatus   @default(WAITING_FOR_PAYMENT)
-  isRefunded            Boolean?  @default(false)
-  isShipped             Boolean   @default(false)
+  user                  User            @relation(fields: [userId], references: [id])
+  orderItems            OrderItem[]     // Relation to OrderItem model
+  status                OrderStatus     @default(WAITING_FOR_PAYMENT)
+  logisticStatus        LogisticStatus  @default(WAITING_FOR_PAYMENT)
+  isRefunded            Boolean?        @default(false)
+  isShipped             Boolean         @default(false)
   shippingDate          DateTime?
   shippingMethod        ShippingMethod? @relation("ShippingMethodToOrder", fields: [shippingMethodId], references: [id])
-  shippingMethodId      String?      // Foreign Key to ShippingMethod model, representing the selected shipping method
+  shippingMethodId      String?         // Foreign Key to ShippingMethod model, representing the selected shipping method
   phone                 String?
   address1              String?
   address2              String?
@@ -341,8 +338,10 @@ model Order {
   state                 String?
   postalCode            String?
   country               String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  trackId               String?
+  paidAt                DateTime?
+  createdAt             DateTime        @default(now())
+  updatedAt             DateTime        @updatedAt
 
   @@index([storeId])
   @@index([userId])
@@ -373,21 +372,4 @@ model ShippingMethod {
   updatedAt             DateTime  @updatedAt
 
   @@index([name])
-}
-
-model Notification {
-  id             String    @id @default(uuid())
-  type           NotificationType    // Type of notification (e.g., 'purchase', 'review_reply')
-  message        String    // Message content of the notification
-  myUserId       String?   // ID of the dashboard user (MyUser)
-  userId         String?   // ID of the web store user (User)
-  viewed         Boolean   @default(false) // Whether the notification has been viewed
-  createdAt      DateTime  @default(now()) // Timestamp of when the notification was created
-  updatedAt      DateTime  @updatedAt      // Timestamp of when the notification was last updated
-
-  myUser         MyUser?   @relation(fields: [myUserId], references: [id], onDelete: SetNull)
-  // user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([myUserId])
-  // @@index([userId])
 }

@@ -162,10 +162,10 @@ export function OrdersDataTable<TData, TValue>({
                     if (cell.column.id === "status") {
                       if (cell.getValue() === "Aguardando Pagamento") {
                         cellStyle =
-                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold"; // Style for 'Sim'
+                          "flex justify-center w-[180px] py-1 mx-auto mt-2 rounded-lg bg-yellow-100 text-amber-600 font-bold";
                       } else if (cell.getValue() === "Pago") {
                         cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Não'
+                          "flex justify-center w-14 py-1 mx-auto mt-2 rounded-lg bg-green-200 text-green-700 font-bold";
                       }
                     }
                     return (

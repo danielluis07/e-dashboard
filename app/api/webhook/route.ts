@@ -1,15 +1,12 @@
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-
+import { Notification } from "@/hooks/use-notifications";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { pusherServer } from "@/lib/pusher";
 
-export async function POST(
-  req: Request,
-  { params }: { params: { storeId: string } }
-) {
+export async function POST(req: Request) {
   const body = await req.text();
   const signature = headers().get("Stripe-Signature");
 
@@ -92,11 +89,14 @@ export async function POST(
         });
       }
 
-      await pusherServer.trigger(params.storeId, "orders:new", {
+      await pusherServer.trigger(order.storeId, "orders:confirmed", {
         id: Math.random().toString(),
-        message: "Pedido com pagamento confirmado!",
+        message: "Pagamento confirmado!",
         orderId: order.id,
-      });
+        orderNumber: order.number,
+        createdAt: new Date(),
+        type: "order",
+      } as Notification);
     } catch (error: any) {
       console.error(`Failed to process order completion: ${error}`);
       return new NextResponse("Internal Server Error", { status: 500 });

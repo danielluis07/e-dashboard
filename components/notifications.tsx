@@ -11,11 +11,47 @@ import {
   MenubarTrigger,
 } from "@radix-ui/react-menubar";
 import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+const timeSince = (date: Date) => {
+  const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
+
+  let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    return interval + " ano" + (interval > 1 ? "s" : "");
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) {
+    return interval + (interval > 1 ? "meses" : "mês");
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) {
+    return interval + " dia" + (interval > 1 ? "s" : "");
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    return interval + " hora" + (interval > 1 ? "s" : "");
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) {
+    return interval + " minuto" + (interval > 1 ? "s" : "");
+  }
+  return seconds + " segundo" + (seconds > 1 ? "s" : "");
+};
 
 export const Notifications = () => {
+  const [currentTime, setCurrentTime] = useState(new Date());
   const notifications = useNotifications();
   const params = useParams<{ storeId: string }>();
   const router = useRouter();
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <Menubar>
@@ -38,23 +74,53 @@ export const Notifications = () => {
             </div>
           )}
           {notifications.items.map((item, index) => (
-            <div
-              key={index}
-              onClick={() =>
-                router.push(
-                  `/dashboard/${params.storeId}/reviews/${item.reviewId}`
-                )
-              }
-              className="relative p-4 bg-slate-100 hover:bg-transparent text-center cursor-pointer">
-              {item.message}
-              <div
-                onClick={(e) => {
-                  e.stopPropagation();
-                  notifications.removeItem(item.id);
-                }}
-                className="absolute top-0 right-0 text-xl cursor-pointer">
-                <IoIosClose />
-              </div>
+            <div key={index}>
+              {item.type === "review" ? (
+                <div
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/${params.storeId}/reviews/${item.reviewId}`
+                    )
+                  }
+                  className="relative p-4 bg-slate-100 hover:bg-transparent cursor-pointer border">
+                  <p>{item.message}</p>
+                  <p className="text-xs text-gray-400">
+                    há {timeSince(new Date(item.createdAt))}
+                  </p>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      notifications.removeItem(item.id);
+                    }}
+                    className="absolute top-0 right-0 text-xl cursor-pointer">
+                    <IoIosClose />
+                  </div>
+                </div>
+              ) : (
+                <div
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/${params.storeId}/orders/${item.orderId}`
+                    )
+                  }
+                  className="relative p-4 bg-slate-100 hover:bg-transparent cursor-pointer border">
+                  <p>{item.message}</p>
+                  <p className="text-sm text-gray-500 py-1">
+                    Pedido nº: {item.orderNumber}
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    há {timeSince(new Date(item.createdAt))}
+                  </p>
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      notifications.removeItem(item.id);
+                    }}
+                    className="absolute top-0 right-0 text-xl cursor-pointer">
+                    <IoIosClose />
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </MenubarContent>

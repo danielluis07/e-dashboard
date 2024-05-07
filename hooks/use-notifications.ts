@@ -4,7 +4,12 @@ import { persist, createJSONStorage } from "zustand/middleware";
 export type Notification = {
   id: string;
   message: string;
-  reviewId: string;
+  reviewId?: string;
+  orderId?: string;
+  orderNumber?: number;
+  productName?: string;
+  createdAt: Date;
+  type: "review" | "order";
 };
 
 interface NotificationsStore {
