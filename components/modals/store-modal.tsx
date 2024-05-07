@@ -16,13 +16,13 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { startTransition, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { CreateStoreSchema } from "@/schemas";
 import { createStore } from "@/actions/create-store";
 
 const StoreModal = () => {
   const storeModal = useStoreModal();
-  const [isPending, setTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
 
   const form = useForm<z.infer<typeof CreateStoreSchema>>({
