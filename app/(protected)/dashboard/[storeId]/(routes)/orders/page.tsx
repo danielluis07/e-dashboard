@@ -45,11 +45,7 @@ const OrdersPage = async ({ params }: { params: { storeId: string } }) => {
     products: item.orderItems
       .map((orderItem) => orderItem.product.name)
       .join(", "),
-    totalPrice: convertCentsToReal(
-      item.orderItems.reduce((total, item) => {
-        return total + Number(item.product.price);
-      }, 0)
-    ),
+    totalPrice: convertCentsToReal(item.totalPrice),
     status: statusPagamento(item.status),
     createdAt: format(item.createdAt, "dd/MM/yyyy", { locale: ptBR }),
   }));

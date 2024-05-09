@@ -94,7 +94,7 @@ export function ReviewsDataTable<TData, TValue>({
           }
           className="w-1/2"
         />
-        {table.getRowModel().rows?.length && (
+        {table.getRowModel().rows?.length > 0 && (
           <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
             <DropdownMenuTrigger asChild>
               <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">
@@ -112,6 +112,26 @@ export function ReviewsDataTable<TData, TValue>({
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
                 .map((column) => {
+                  let renderedColumnId = column.id;
+
+                  if (column.id === "imageUrl") {
+                    renderedColumnId = "Imagem";
+                  } else if (column.id === "product") {
+                    renderedColumnId = "Produto";
+                  } else if (column.id === "createdAt") {
+                    renderedColumnId = "Enviado em";
+                  } else if (column.id === "user") {
+                    renderedColumnId = "Usuário";
+                  } else if (column.id === "rating") {
+                    renderedColumnId === "Nota";
+                  } else if (column.id === "hasReply") {
+                    renderedColumnId === "Respondido";
+                  } else if (column.id === "Archived") {
+                    renderedColumnId === "Arquivado";
+                  } else if (column.id === "actions") {
+                    renderedColumnId === "Ações";
+                  }
+
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -120,7 +140,7 @@ export function ReviewsDataTable<TData, TValue>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }>
-                      {column.id}
+                      {renderedColumnId}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -149,7 +169,7 @@ export function ReviewsDataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {table.getRowModel().rows?.length > 0 ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -159,10 +179,10 @@ export function ReviewsDataTable<TData, TValue>({
                     if (cell.column.id === "hasReply") {
                       if (cell.getValue() === "Sim") {
                         cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Sim'
+                          "flex justify-center w-10 py-1 ml-4 rounded-lg bg-green-200 text-green-700 font-bold"; // Style for 'Sim'
                       } else if (cell.getValue() === "Não") {
                         cellStyle =
-                          "flex justify-center w-10 py-1 rounded-lg bg-red-200 text-red-700 font-bold"; // Style for 'Não'
+                          "flex justify-center w-10 py-1 ml-4 rounded-lg bg-red-200 text-red-700 font-bold"; // Style for 'Não'
                       }
                     }
 

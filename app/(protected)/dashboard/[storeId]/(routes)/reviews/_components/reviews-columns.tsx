@@ -37,7 +37,7 @@ export const columns: ColumnDef<ReviewColumnProps>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Data",
+    header: "Enviado em",
   },
   {
     accessorKey: "product",

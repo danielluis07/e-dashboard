@@ -83,7 +83,7 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
   return (
     <>
       <div className="w-full overflow-auto">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pr-1">
           <Heading
             title={`Todos os Produtos (${data.length})`}
             description="Gerencie os produtos de sua loja"

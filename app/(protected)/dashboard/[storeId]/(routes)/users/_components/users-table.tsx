@@ -112,6 +112,18 @@ export function UsersDataTable<TData, TValue>({
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
                 .map((column) => {
+                  let renderedColumnId = column.id;
+
+                  if (column.id === "imageUrl") {
+                    renderedColumnId = "Imagem";
+                  } else if (column.id === "name") {
+                    renderedColumnId = "Nome";
+                  } else if (column.id === "createdAt") {
+                    renderedColumnId = "Entrou em";
+                  } else if (column.id === "actions") {
+                    renderedColumnId = "Ações";
+                  }
+
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -120,7 +132,7 @@ export function UsersDataTable<TData, TValue>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }>
-                      {column.id}
+                      {renderedColumnId}
                     </DropdownMenuCheckboxItem>
                   );
                 })}

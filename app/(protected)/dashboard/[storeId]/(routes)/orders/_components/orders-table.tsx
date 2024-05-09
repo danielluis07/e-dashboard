@@ -112,6 +112,18 @@ export function OrdersDataTable<TData, TValue>({
                 .getAllColumns()
                 .filter((column) => column.getCanHide())
                 .map((column) => {
+                  let renderedColumnId = column.id;
+
+                  if (column.id === "orderNumber") {
+                    renderedColumnId = "Número";
+                  } else if (column.id === "user") {
+                    renderedColumnId = "Usuário";
+                  } else if (column.id === "totalPrice") {
+                    renderedColumnId = "Preço Total";
+                  } else if (column.id === "actions") {
+                    renderedColumnId = "Ações";
+                  }
+
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -120,7 +132,7 @@ export function OrdersDataTable<TData, TValue>({
                       onCheckedChange={(value) =>
                         column.toggleVisibility(!!value)
                       }>
-                      {column.id}
+                      {renderedColumnId}
                     </DropdownMenuCheckboxItem>
                   );
                 })}
@@ -167,6 +179,7 @@ export function OrdersDataTable<TData, TValue>({
                           "flex justify-center w-14 py-1 mx-auto mt-2 rounded-lg bg-green-200 text-green-700 font-bold";
                       }
                     }
+
                     return (
                       <TableCell
                         key={cell.id}

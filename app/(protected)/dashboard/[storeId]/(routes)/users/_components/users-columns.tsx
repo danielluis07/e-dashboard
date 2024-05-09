@@ -40,7 +40,7 @@ export const columns: ColumnDef<UsersColumnProps>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Criado em",
+    header: "Entrou em",
   },
   {
     id: "actions",
