@@ -88,11 +88,16 @@ export async function POST(
       },
     }));
 
+  const totalPrice = productDetails.reduce((acc, product, index) => {
+    return acc + product.price;
+  }, 0);
+
   // Create the order with order items including product and size
   const order = await db.order.create({
     data: {
       storeId: params.storeId,
-      userId: userId,
+      totalPrice,
+      userId,
       address1: user.address1,
       address2: user.address2,
       city: user.city,

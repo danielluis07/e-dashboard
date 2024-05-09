@@ -317,6 +317,7 @@ model Product {
 model Order {
   id                    String          @id @default(uuid())
   number                Int             @default(autoincrement())      
+  totalPrice            Int
   storeId               String          // Foreign Key to Store
   store                 Store           @relation("StoreToOrder", fields: [storeId], references: [id])
   userId                String

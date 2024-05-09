@@ -12,6 +12,7 @@ import { getGraphRevenue } from "@/actions/get-graph-revenue";
 import { getStockCount } from "@/actions/get-stock-count";
 import { getUsersCount } from "@/actions/get-users-count";
 import { convertCentsToReal } from "@/lib/utils";
+import { OrdersByDayChart } from "../../_components/charts/orders-by-day";
 
 interface DashboardPageProps {
   params: {
@@ -92,6 +93,10 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
           <CardContent className="pl-2">
             <Overview data={graphRevenue} />
           </CardContent>
+        </Card>
+        <Card className="p-2">
+          <CardHeader className="font-bold text-xl">Vendas por dia</CardHeader>
+          <OrdersByDayChart data={[]} />
         </Card>
       </div>
     </div>
