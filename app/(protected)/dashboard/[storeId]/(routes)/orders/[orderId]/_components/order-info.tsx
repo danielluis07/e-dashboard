@@ -12,7 +12,7 @@ import { convertCentsToReal } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { format } from "date-fns";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 import {
   Form,
   FormControl,

@@ -1,6 +1,6 @@
 import { format } from "date-fns";
 import { db } from "@/lib/db";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 import { ColorColumnProps } from "./_components/colors-columns";
 import { ColorsClient } from "./_components/colors-client";
 

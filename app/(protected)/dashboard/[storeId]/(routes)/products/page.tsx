@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import { convertCentsToReal } from "@/lib/utils";
 import { db } from "@/lib/db";
 import { formatter } from "@/lib/utils";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 import { ProductsClient } from "./_components/products-client";
 import { ProductColumnProps } from "./_components/products-columns";
 

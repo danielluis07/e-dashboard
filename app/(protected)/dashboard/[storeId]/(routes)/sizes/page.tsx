@@ -1,7 +1,4 @@
-import { format } from "date-fns";
-
 import { db } from "@/lib/db";
-import ptBR from "date-fns/locale/pt-BR";
 import { SizesColumnProps } from "./_components/sizes-columns";
 import { SizesClient } from "./_components/sizes-client";
 

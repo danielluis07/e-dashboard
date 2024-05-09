@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import { Card } from "@/components/ui/card";
 import { db } from "@/lib/db";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 import { ReviewsClient } from "./_components/reviews-client";
 import { ReviewColumnProps } from "./_components/reviews-columns";
 import { ReviewStar } from "./_components/review-star";

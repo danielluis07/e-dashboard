@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { BillboardClient } from "./_components/client";
 import { BillboardColumn } from "./_components/billboard-columns";
 import { format } from "date-fns";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 
 const BillboardsPage = async ({ params }: { params: { storeId: string } }) => {
   const billboards = await db.billboard.findMany({

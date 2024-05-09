@@ -4,7 +4,7 @@ import { Order, Product } from "@prisma/client";
 import Image from "next/image";
 import placeholder from "@/public/placeholder-logo.jpg";
 import { format } from "date-fns";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 import { cn } from "@/lib/utils";
 import { FaAngleDown } from "react-icons/fa";
 import { useState } from "react";

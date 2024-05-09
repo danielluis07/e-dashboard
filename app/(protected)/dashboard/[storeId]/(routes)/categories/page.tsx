@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { CategoriesClient } from "./_components/categories-client";
 import { CategoriesColumnsProps } from "./_components/categories-columns";
 import { format } from "date-fns";
-import ptBR from "date-fns/locale/pt-BR";
+import { ptBR } from "date-fns/locale/pt-BR";
 
 const CategoriesPage = async ({ params }: { params: { storeId: string } }) => {
   const categories = await db.category.findMany({
