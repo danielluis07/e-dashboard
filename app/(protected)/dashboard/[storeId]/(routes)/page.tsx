@@ -13,6 +13,10 @@ import { getStockCount } from "@/actions/get-stock-count";
 import { getUsersCount } from "@/actions/get-users-count";
 import { convertCentsToReal } from "@/lib/utils";
 import { OrdersByDayChart } from "../../_components/charts/orders-by-day";
+import { getSalesData } from "@/actions/charts-data/get-sales-data";
+import { subDays } from "date-fns";
+import { getUserData } from "@/actions/charts-data/get-users-data";
+import { UsersByDayChart } from "../../_components/charts/users-by-day";
 
 interface DashboardPageProps {
   params: {
@@ -21,11 +25,23 @@ interface DashboardPageProps {
 }
 
 const DashboardPage = async ({ params }: DashboardPageProps) => {
-  const totalRevenue = await getTotalRevenue(params.storeId);
-  const graphRevenue = await getGraphRevenue(params.storeId);
-  const salesCount = await getSalesCount(params.storeId);
-  const stockCount = await getStockCount(params.storeId);
-  const usersCount = await getUsersCount(params.storeId);
+  const [
+    salesData,
+    usersData,
+    totalRevenue,
+    graphRevenue,
+    salesCount,
+    stockCount,
+    usersCount,
+  ] = await Promise.all([
+    getSalesData(subDays(new Date(), 5), new Date()),
+    getUserData(subDays(new Date(), 5), new Date()),
+    getTotalRevenue(params.storeId),
+    getGraphRevenue(params.storeId),
+    getSalesCount(params.storeId),
+    getStockCount(params.storeId),
+    getUsersCount(params.storeId),
+  ]);
 
   return (
     <div className="h-full xl:h-screen xl:overflow-auto pl-3 pb-3 pr-3 pt-16 xl:pt-5">
@@ -96,7 +112,13 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
         </Card>
         <Card className="p-2">
           <CardHeader className="font-bold text-xl">Vendas por dia</CardHeader>
-          <OrdersByDayChart data={[]} />
+          <OrdersByDayChart data={salesData.chartData} />
+        </Card>
+        <Card className="p-2">
+          <CardHeader className="font-bold text-xl">
+            Usuários por dia
+          </CardHeader>
+          <UsersByDayChart data={usersData.chartData} />
         </Card>
       </div>
     </div>

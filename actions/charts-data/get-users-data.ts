@@ -3,22 +3,21 @@ import { formatDate } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
 import { eachDayOfInterval, interval } from "date-fns";
 
-export const getSalesData = async (
+export const getUserData = async (
   createdAfter: Date | null,
   createdBefore: Date | null
 ) => {
-  const createdAtQuery: Prisma.OrderWhereInput["createdAt"] = {};
+  const createdAtQuery: Prisma.UserWhereInput["createdAt"] = {};
   if (createdAfter) createdAtQuery.gte = createdAfter;
   if (createdBefore) createdAtQuery.lte = createdBefore;
 
-  const [data, chartData] = await Promise.all([
+  const [userCount, orderData, chartData] = await Promise.all([
+    db.user.count(),
     db.order.aggregate({
       _sum: { totalPrice: true },
-      _count: true,
     }),
-
-    db.order.findMany({
-      select: { createdAt: true, totalPrice: true },
+    db.user.findMany({
+      select: { createdAt: true },
       where: { createdAt: createdAtQuery },
       orderBy: { createdAt: "asc" },
     }),
@@ -32,19 +31,20 @@ export const getSalesData = async (
   ).map((date) => {
     return {
       date: formatDate(date),
-      totalSales: 0,
+      totalUsers: 0,
     };
   });
 
   return {
-    chartData: chartData.reduce((data, order) => {
-      const formattedDate = formatDate(order.createdAt);
+    chartData: chartData.reduce((data, user) => {
+      const formattedDate = formatDate(user.createdAt);
       const entry = dayArray.find((day) => day.date === formattedDate);
       if (entry == null) return data;
-      entry.totalSales += order.totalPrice / 100;
+      entry.totalUsers += 1;
       return data;
     }, dayArray),
-    amount: (data._sum.totalPrice || 0) / 100,
-    numberOfSales: data._count,
+    userCount,
+    averageValuePerUser:
+      userCount === 0 ? 0 : (orderData._sum.totalPrice || 0) / userCount / 100,
   };
 };
