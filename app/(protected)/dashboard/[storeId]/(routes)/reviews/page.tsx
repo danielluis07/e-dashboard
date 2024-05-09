@@ -8,24 +8,25 @@ import { ReviewStar } from "./_components/review-star";
 import { Heading } from "@/components/ui/heading";
 
 const ReviewsPage = async ({ params }: { params: { storeId: string } }) => {
-  const reviews = await db.review.findMany({
-    where: {
-      storeId: params.storeId,
-    },
-    include: {
-      user: true,
-      product: true,
-    },
-  });
-
-  const averageRatingResult = await db.review.aggregate({
-    where: {
-      storeId: params.storeId,
-    },
-    _avg: {
-      rating: true,
-    },
-  });
+  const [reviews, averageRatingResult] = await Promise.all([
+    db.review.findMany({
+      where: {
+        storeId: params.storeId,
+      },
+      include: {
+        user: true,
+        product: true,
+      },
+    }),
+    db.review.aggregate({
+      where: {
+        storeId: params.storeId,
+      },
+      _avg: {
+        rating: true,
+      },
+    }),
+  ]);
 
   const averageRating =
     averageRatingResult._avg.rating !== null

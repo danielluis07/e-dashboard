@@ -7,17 +7,19 @@ const CategoryPage = async ({
 }: {
   params: { categoryId: string; storeId: string };
 }) => {
-  const category = await db.category.findUnique({
-    where: {
-      id: params.categoryId,
-    },
-  });
+  const [category, billboards] = await Promise.all([
+    db.category.findUnique({
+      where: {
+        id: params.categoryId,
+      },
+    }),
+    db.billboard.findMany({
+      where: {
+        storeId: params.storeId,
+      },
+    }),
+  ]);
 
-  const billboards = await db.billboard.findMany({
-    where: {
-      storeId: params.storeId,
-    },
-  });
   return (
     <div className="flex mt-20 items-center justify-center">
       <FormWrapper>
