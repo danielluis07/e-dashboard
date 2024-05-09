@@ -144,7 +144,7 @@ export const CreateProductForm = ({
   };
 
   return (
-    <div className="h-full mt-8">
+    <div className="mt-8">
       <Heading title="Criar produto" />
       <Separator className="mt-1" />
       <Form {...form}>
@@ -155,7 +155,7 @@ export const CreateProductForm = ({
             control={form.control}
             name="images"
             render={({ field }) => (
-              <FormItem className="pt-10">
+              <FormItem className="pt-3">
                 <FormLabel>Escolha uma imagem</FormLabel>
                 <FormControl>
                   <ImageUpload
@@ -269,7 +269,7 @@ export const CreateProductForm = ({
                 </FormItem>
               )}
             />
-            <div className="flex flex-col py-1 space-y-5 max-h-36 overflow-auto">
+            <div className="flex flex-col py-1 space-y-5 max-h-28 overflow-auto">
               {fields.map((size, index) => (
                 <div
                   key={size.id}

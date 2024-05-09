@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { pusherServer } from "@/lib/pusher";
+import { Notification } from "@/hooks/use-notifications";
 
 export async function POST(
   req: Request,
@@ -52,6 +54,15 @@ export async function POST(
         storeId,
       },
     });
+
+    await pusherServer.trigger(params.storeId, "users:new", {
+      id: Math.random().toString(),
+      message: "Um novo usuário se cadastrou!",
+      userId: user.id,
+      userName: user.name,
+      createdAt: new Date(),
+      type: "user",
+    } as Notification);
 
     return NextResponse.json(storeUser);
   } catch (error) {

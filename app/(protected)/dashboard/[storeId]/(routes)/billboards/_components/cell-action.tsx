@@ -76,18 +76,23 @@ const CellAction = ({ data }: CellActionProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data.id)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onCopy(data.id)}>
             <IoCopyOutline className="mr-2 h-4 w-4" />
             Copiar Id
           </DropdownMenuItem>
           <DropdownMenuItem
+            className="cursor-pointer"
             onClick={() =>
               router.push(`/dashboard/${params.storeId}/billboards/${data.id}`)
             }>
             <CiEdit className="mr-2 h-4 w-4" />
             Editar
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setOpen(true)}>
             <CiTrash className="mr-2 h-4 w-4" />
             Deletar
           </DropdownMenuItem>

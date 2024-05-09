@@ -17,7 +17,7 @@ import { FaHouse } from "react-icons/fa6";
 import { BiSolidMessageDetail } from "react-icons/bi";
 import { logout } from "@/actions/logout";
 import { toast } from "sonner";
-import { ExitModal } from "@/modals/exit-modal";
+import { ExitModal } from "@/components/modals/exit-modal";
 
 interface MainNavProps {
   isOpen: boolean;

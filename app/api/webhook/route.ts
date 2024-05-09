@@ -37,6 +37,7 @@ export async function POST(req: Request) {
         where: { id: session.metadata?.orderId },
         data: {
           status: "PAID",
+          paidAt: new Date(),
         },
         include: {
           orderItems: {

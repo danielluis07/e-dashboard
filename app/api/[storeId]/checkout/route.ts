@@ -62,6 +62,11 @@ export async function POST(
         in: productIds,
       },
     },
+    include: {
+      images: {
+        take: 1,
+      },
+    },
   });
 
   if (productDetails.length !== products.length) {
@@ -77,6 +82,7 @@ export async function POST(
         currency: "BRL",
         product_data: {
           name: product.name,
+          images: [product.images[0]?.url],
         },
         unit_amount: product.price,
       },
@@ -98,6 +104,10 @@ export async function POST(
         create: products.map((product: ProductCheckoutInfo) => ({
           productId: product.productId,
           sizeId: product.sizeId, // Ensuring each order item has the correct size
+          sizeName: product.sizeName,
+          sizeValue: product.sizeValue,
+          imageUrl: productDetails.find((p) => p.id === product.productId)
+            ?.images[0]?.url,
         })),
       },
     },

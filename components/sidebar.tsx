@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { MdOutlineRateReview } from "react-icons/md";
 import { Notifications } from "./notifications";
 import { FiPackage } from "react-icons/fi";
+import { FaUser } from "react-icons/fa";
 
 interface SideBarProps {
   name: string | null | undefined;
@@ -31,10 +32,17 @@ export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
   useEffect(() => {
     pusherClient.subscribe(params.storeId);
 
+    const newUser = (data: Notification) => {
+      notifications.addItem(data);
+      toast.success(data.message, {
+        icon: <FaUser className="text-sky-500" />,
+      });
+    };
+
     const newReview = (data: Notification) => {
       notifications.addItem(data);
       toast.success(data.message, {
-        icon: <MdOutlineRateReview className="text-sky-500" />,
+        icon: <MdOutlineRateReview className="text-slate-500" />,
       });
     };
 
@@ -52,12 +60,14 @@ export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
       });
     };
 
+    pusherClient.bind("users:new", newUser);
     pusherClient.bind("reviews:new", newReview);
     pusherClient.bind("orders:new", newOrder);
     pusherClient.bind("orders:confirmed", confirmedOrder);
 
     return () => {
       pusherClient.unsubscribe(params.storeId);
+      pusherClient.unbind("users:new");
       pusherClient.unbind("reviews:new");
       pusherClient.unbind("orders:new");
       pusherClient.unbind("orders:confirmed");

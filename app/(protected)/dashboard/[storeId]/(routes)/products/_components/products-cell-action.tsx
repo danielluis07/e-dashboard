@@ -78,16 +78,21 @@ export const ProductsCellAction = ({ data }: ProductsCellActionProps) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => onCopy(data.id)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => onCopy(data.id)}>
             <IoCopyOutline className="mr-2 size-5" /> Copiar Id
           </DropdownMenuItem>
           <DropdownMenuItem
+            className="cursor-pointer"
             onClick={() =>
               router.push(`/dashboard/${params.storeId}/products/${data.id}`)
             }>
             <CiEdit className="mr-2 size-5" /> Editar
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setOpen(true)}>
             <CiTrash className="mr-2 size-5" /> Deletar
           </DropdownMenuItem>
         </DropdownMenuContent>

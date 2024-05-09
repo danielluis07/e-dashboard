@@ -95,14 +95,6 @@ export async function POST(
       type: "review",
     } as Notification);
 
-    console.log({
-      id: Math.random().toString(),
-      message: "Você recebeu uma nova avaliação!",
-      reviewId: review.id,
-      createdAt: new Date(),
-      type: "review",
-    });
-
     return NextResponse.json(review, { headers: corsHeaders });
   } catch (error) {
     console.log("[REVIEWS_POST]", error);

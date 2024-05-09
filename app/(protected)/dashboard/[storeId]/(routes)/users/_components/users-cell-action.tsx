@@ -42,6 +42,7 @@ export const UsersCellAction = ({ data }: UsersCellActionProps) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Ações</DropdownMenuLabel>
           <DropdownMenuItem
+            className="cursor-pointer"
             onClick={() =>
               router.push(`/dashboard/${params.storeId}/users/${data.id}`)
             }>

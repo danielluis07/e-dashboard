@@ -24,7 +24,7 @@ const OrderPage = async ({
 
   return (
     <div className="h-full xl:h-screen mt-14 xl:mt-0 xl:overflow-auto">
-      <OrderInfo order={order} />
+      <OrderInfo initialData={order} />
     </div>
   );
 };

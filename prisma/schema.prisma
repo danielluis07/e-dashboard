@@ -314,8 +314,6 @@ model Product {
 //  products    Product[]  @relation("OfferToProduct")
 //}
 
-
-
 model Order {
   id                    String          @id @default(uuid())
   number                Int             @default(autoincrement())      
@@ -355,6 +353,9 @@ model OrderItem {
   productId             String      // Foreign Key to Product
   product               Product     @relation(fields: [productId], references: [id])
   sizeId                String
+  sizeName              String?
+  sizeValue             String?
+  imageUrl              String?
   size                  Size        @relation(fields: [sizeId], references: [id])
 
   @@index([orderId])

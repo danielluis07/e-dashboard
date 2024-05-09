@@ -96,7 +96,7 @@ export const Notifications = () => {
                     <IoIosClose />
                   </div>
                 </div>
-              ) : (
+              ) : item.type === "order" ? (
                 <div
                   onClick={() =>
                     router.push(
@@ -120,6 +120,29 @@ export const Notifications = () => {
                     <IoIosClose />
                   </div>
                 </div>
+              ) : (
+                item.type === "user" && (
+                  <div
+                    onClick={() =>
+                      router.push(
+                        `/dashboard/${params.storeId}/users/${item.userId}`
+                      )
+                    }
+                    className="relative p-4 bg-slate-100 hover:bg-transparent cursor-pointer border">
+                    <p>{item.message}</p>
+                    <p className="text-xs text-gray-400">
+                      há {timeSince(new Date(item.createdAt))}
+                    </p>
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        notifications.removeItem(item.id);
+                      }}
+                      className="absolute top-0 right-0 text-xl cursor-pointer">
+                      <IoIosClose />
+                    </div>
+                  </div>
+                )
               )}
             </div>
           ))}

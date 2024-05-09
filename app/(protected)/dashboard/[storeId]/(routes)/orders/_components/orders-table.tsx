@@ -157,7 +157,6 @@ export function OrdersDataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => {
-                    console.log(cell);
                     let cellStyle = "";
                     if (cell.column.id === "status") {
                       if (cell.getValue() === "Aguardando Pagamento") {

@@ -110,7 +110,7 @@ export function ProductsDataTable<TData, TValue>({
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <DeleteProductsButton productsIds={selectedProductsIds} />
           )}
-          {table.getRowModel().rows?.length && (
+          {table.getRowModel().rows?.length > 0 && (
             <DropdownMenu onOpenChange={() => setIsOpen(!isOpen)}>
               <DropdownMenuTrigger asChild>
                 <div className="flex cursor-pointer items-center gap-x-1 justify-center p-2 rounded-lg hover:border-fuchsia-300">

@@ -18,7 +18,7 @@ import { LogoutButton } from "@/components/auth/logout-button";
 import { CiLogout } from "react-icons/ci";
 import { FaHouse } from "react-icons/fa6";
 import { useState } from "react";
-import { ExitModal } from "@/modals/exit-modal";
+import { ExitModal } from "@/components/modals/exit-modal";
 import { logout } from "@/actions/logout";
 import { toast } from "sonner";
 

@@ -35,7 +35,7 @@ export const Navbar = ({ imageUrl, stores }: NavbarBarProps) => {
     }
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     pusherClient.subscribe(params.storeId);
 
     const newReview = (data: Notification) => {
@@ -69,7 +69,7 @@ export const Navbar = ({ imageUrl, stores }: NavbarBarProps) => {
       pusherClient.unbind("orders:new");
       pusherClient.unbind("orders:confirmed");
     };
-  }, [params.storeId, notifications]);
+  }, [params.storeId, notifications]); */
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -86,7 +86,7 @@ export const Navbar = ({ imageUrl, stores }: NavbarBarProps) => {
       )}>
       <div className="flex items-center gap-x-3">
         <UserButton imageUrl={imageUrl} />
-        <Notifications />
+        {/* <Notifications /> */}
         <StoreSwitcher items={stores} />
       </div>
       <MobileNavbar />

@@ -32,7 +32,6 @@ export type Filters = {
 };
 
 export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
-  const [open, setOpen] = useState<boolean>(false);
   const params = useParams<{ storeId: string }>();
   const [isPending, startTransition] = useTransition();
   const [filters, setFilters] = useState<Filters>({
@@ -97,89 +96,100 @@ export const ProductsClient: React.FC<ProductsClientProps> = ({ data }) => {
           </Button>
         </div>
         <Separator className="my-8" />
-        <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto grid gap-1 grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">
-          <div className="flex items-center space-x-2">
-            <Input
-              id="watches"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showWatchesOnly}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  showWatchesOnly: event.target.checked,
-                })
-              }
-            />
-            <Label htmlFor="watches">Relógios</Label>
+        {data.length > 0 && (
+          <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto grid gap-1 grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6">
+            <div className="flex items-center space-x-2">
+              <Input
+                id="watches"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showWatchesOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showWatchesOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="watches">Relógios</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                id="shoes"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showShoesOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showShoesOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="shoes">Sapatos</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                id="shirts"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showShirtsOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showShirtsOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="shirts">Coletes/Camisas</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                id="suits"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showSuitsOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showSuitsOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="suits">Ternos</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                id="isArchived"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showArchivedOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showArchivedOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="isArchived">Arquivados</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Input
+                id="isFeatured"
+                type="checkbox"
+                className="size-4"
+                checked={filters.showFeaturedOnly}
+                onChange={(event) =>
+                  setFilters({
+                    ...filters,
+                    showFeaturedOnly: event.target.checked,
+                  })
+                }
+              />
+              <Label htmlFor="isFeatured">Destaques</Label>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="shoes"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showShoesOnly}
-              onChange={(event) =>
-                setFilters({ ...filters, showShoesOnly: event.target.checked })
-              }
-            />
-            <Label htmlFor="shoes">Sapatos</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="shirts"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showShirtsOnly}
-              onChange={(event) =>
-                setFilters({ ...filters, showShirtsOnly: event.target.checked })
-              }
-            />
-            <Label htmlFor="shirts">Coletes/Camisas</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="suits"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showSuitsOnly}
-              onChange={(event) =>
-                setFilters({ ...filters, showSuitsOnly: event.target.checked })
-              }
-            />
-            <Label htmlFor="suits">Ternos</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="isArchived"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showArchivedOnly}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  showArchivedOnly: event.target.checked,
-                })
-              }
-            />
-            <Label htmlFor="isArchived">Arquivados</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Input
-              id="isFeatured"
-              type="checkbox"
-              className="size-4"
-              checked={filters.showFeaturedOnly}
-              onChange={(event) =>
-                setFilters({
-                  ...filters,
-                  showFeaturedOnly: event.target.checked,
-                })
-              }
-            />
-            <Label htmlFor="isFeatured">Destaques</Label>
-          </div>
-        </div>
+        )}
         <div className="w-[330px] sm:w-[580px] md:w-[750px] lg:w-full mx-auto">
           <ProductsDataTable
             searchKey="name"

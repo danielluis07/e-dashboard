@@ -1,5 +1,12 @@
 import * as z from "zod";
 
+const LogisticStatus = z.enum([
+  "WAITING_FOR_PAYMENT",
+  "PREPARING",
+  "SENT",
+  "DELIVERED",
+]);
+
 export const SettingsSchema = z.object({
   storeName: z.string().min(1, {
     message: "É necessário informar um nome",
@@ -174,4 +181,9 @@ export const ReviewSchema = z.object({
       message: "É necessário informar ao menos 1 letra",
     })
     .nullable(),
+});
+
+export const OrderSchema = z.object({
+  logisticStatus: LogisticStatus.optional(),
+  trackId: z.string().optional().nullable(),
 });
