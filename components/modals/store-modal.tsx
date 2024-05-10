@@ -18,7 +18,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useState, useTransition } from "react";
 import { CreateStoreSchema } from "@/schemas";
-import { createStore } from "@/actions/create-store";
+import { createStore } from "@/actions/store/create-store";
 
 const StoreModal = () => {
   const storeModal = useStoreModal();

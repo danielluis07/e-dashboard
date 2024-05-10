@@ -54,8 +54,16 @@ const DashboardPage = async ({
     stockCount,
     usersCount,
   ] = await Promise.all([
-    getSalesData(ordersRangeOption.startDate, ordersRangeOption.endDate),
-    getUserData(usersRangeOption?.startDate, usersRangeOption?.endDate),
+    getSalesData(
+      params.storeId,
+      ordersRangeOption.startDate,
+      ordersRangeOption.endDate
+    ),
+    getUserData(
+      params.storeId,
+      usersRangeOption?.startDate,
+      usersRangeOption?.endDate
+    ),
     getTotalRevenue(params.storeId),
     getGraphRevenue(params.storeId),
     getSalesCount(params.storeId),
@@ -122,14 +130,6 @@ const DashboardPage = async ({
             </CardContent>
           </Card>
         </div>
-        <Card className="col-span-4">
-          <CardHeader>
-            <CardTitle>Gráfico</CardTitle>
-          </CardHeader>
-          <CardContent className="pl-2">
-            <Overview data={graphRevenue} />
-          </CardContent>
-        </Card>
         <ChartCard
           title="Vendas por Período"
           selectRangeLabel={ordersRangeOption.label}

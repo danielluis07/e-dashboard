@@ -5,6 +5,7 @@ import { eachDayOfInterval, interval, startOfDay } from "date-fns";
 import { getChartDateArray } from "./get-chart-date-array";
 
 export const getUserData = async (
+  storeId: string,
   createdAfter: Date | null,
   createdBefore: Date | null
 ) => {
@@ -13,13 +14,30 @@ export const getUserData = async (
   if (createdBefore) createdAtQuery.lte = createdBefore;
 
   const [userCount, orderData, chartData] = await Promise.all([
-    db.user.count(),
+    db.storeUser.count({
+      where: {
+        storeId: storeId,
+        user: {
+          createdAt: createdAtQuery,
+        },
+      },
+    }),
     db.order.aggregate({
       _sum: { totalPrice: true },
+      where: {
+        storeId,
+      },
     }),
     db.user.findMany({
+      where: {
+        stores: {
+          some: {
+            storeId,
+          },
+        },
+        createdAt: createdAtQuery,
+      },
       select: { createdAt: true },
-      where: { createdAt: createdAtQuery },
       orderBy: { createdAt: "asc" },
     }),
   ]);

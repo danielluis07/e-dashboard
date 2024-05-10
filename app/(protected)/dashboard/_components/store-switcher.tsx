@@ -31,11 +31,7 @@ interface StoreSwitcherProps extends PopoverTriggerProps {
   isOpen?: boolean;
 }
 
-export const StoreSwitcher = ({
-  className,
-  items = [],
-  isOpen,
-}: StoreSwitcherProps) => {
+export const StoreSwitcher = ({ items = [], isOpen }: StoreSwitcherProps) => {
   const [open, setOpen] = useState(false);
   const storeModal = useStoreModal();
   const params = useParams();
@@ -52,7 +48,7 @@ export const StoreSwitcher = ({
 
   const onStoreSelect = (store: { value: string; label: string }) => {
     setOpen(false);
-    router.push(`/${store.value}`);
+    router.push(`/dashboard/${store.value}`);
   };
   return (
     <Popover>
@@ -82,7 +78,7 @@ export const StoreSwitcher = ({
                 <CommandItem
                   key={store.value}
                   onSelect={() => onStoreSelect(store)}
-                  className="text-sm hover:text-fuchsia-500 group">
+                  className="text-sm hover:text-fuchsia-500 group cursor-pointer">
                   <FaStore className="mr-2 size-4 group-hover:text-fuchsia-500" />
                   <p className="group-hover:text-fuchsia-500">{store.label}</p>
                   <FaCheck
@@ -101,12 +97,12 @@ export const StoreSwitcher = ({
           <CommandList>
             <CommandGroup className="group">
               <CommandItem
-                className="group-hover:text-fuchsia-500"
+                className="group-hover:text-fuchsia-500 cursor-pointer"
                 onSelect={() => {
                   setOpen(false);
                   storeModal.onOpen();
                 }}>
-                <FaPlusCircle className="mr-2 size-5 group-hover:text-fuchsia-500" />
+                <FaPlusCircle className="mr-2 size-5 group-hover:text-fuchsia-500 cursor-pointer" />
                 Criar Loja
               </CommandItem>
             </CommandGroup>

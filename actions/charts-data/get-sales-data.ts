@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
-import { formatDate } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
-import { eachDayOfInterval, interval, startOfDay } from "date-fns";
+import { startOfDay } from "date-fns";
 import { getChartDateArray } from "./get-chart-date-array";
 
 export const getSalesData = async (
+  storeId: string,
   createdAfter: Date | null,
   createdBefore: Date | null
 ) => {
@@ -16,11 +16,12 @@ export const getSalesData = async (
     db.order.aggregate({
       _sum: { totalPrice: true },
       _count: true,
+      where: { storeId },
     }),
 
     db.order.findMany({
       select: { createdAt: true, totalPrice: true },
-      where: { createdAt: createdAtQuery },
+      where: { createdAt: createdAtQuery, storeId },
       orderBy: { createdAt: "asc" },
     }),
   ]);
