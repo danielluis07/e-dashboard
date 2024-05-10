@@ -1,7 +1,8 @@
 import { db } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 import { Prisma } from "@prisma/client";
-import { eachDayOfInterval, interval } from "date-fns";
+import { eachDayOfInterval, interval, startOfDay } from "date-fns";
+import { getChartDateArray } from "./get-chart-date-array";
 
 export const getUserData = async (
   createdAfter: Date | null,
@@ -23,21 +24,21 @@ export const getUserData = async (
     }),
   ]);
 
-  const dayArray = eachDayOfInterval(
-    interval(
-      createdAfter || chartData[0].createdAt,
-      createdBefore || new Date()
-    )
-  ).map((date) => {
+  const { array, format } = getChartDateArray(
+    createdAfter || startOfDay(chartData[0].createdAt),
+    createdBefore || new Date()
+  );
+
+  const dayArray = array.map((date) => {
     return {
-      date: formatDate(date),
+      date: format(date),
       totalUsers: 0,
     };
   });
 
   return {
     chartData: chartData.reduce((data, user) => {
-      const formattedDate = formatDate(user.createdAt);
+      const formattedDate = format(user.createdAt);
       const entry = dayArray.find((day) => day.date === formattedDate);
       if (entry == null) return data;
       entry.totalUsers += 1;

@@ -1,7 +1,6 @@
 import { PiPiggyBankLight } from "react-icons/pi";
 import { BsBoxes } from "react-icons/bs";
 import { CiCreditCard1, CiUser } from "react-icons/ci";
-
 import { Separator } from "@/components/ui/separator";
 import { Overview } from "../../_components/overview";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,17 +13,38 @@ import { getUsersCount } from "@/actions/get-users-count";
 import { convertCentsToReal } from "@/lib/utils";
 import { OrdersByDayChart } from "../../_components/charts/orders-by-day";
 import { getSalesData } from "@/actions/charts-data/get-sales-data";
-import { subDays } from "date-fns";
 import { getUserData } from "@/actions/charts-data/get-users-data";
 import { UsersByDayChart } from "../../_components/charts/users-by-day";
+import { RANGE_OPTIONS, getRangeOption } from "@/lib/range-options";
+import { ChartCard } from "../../_components/charts/chart-card";
 
-interface DashboardPageProps {
-  params: {
-    storeId: string;
+const DashboardPage = async ({
+  params,
+  searchParams,
+}: {
+  params: { storeId: string };
+  searchParams: {
+    ordersRange?: string;
+    usersRange?: string;
+    ordersRangeFrom: string;
+    ordersRangeTo: string;
+    usersRangeFrom: string;
+    usersRangeTo: string;
   };
-}
+}) => {
+  const ordersRangeOption =
+    getRangeOption(
+      searchParams.ordersRange,
+      searchParams.ordersRangeFrom,
+      searchParams.ordersRangeTo
+    ) || RANGE_OPTIONS.last_7_days;
+  const usersRangeOption =
+    getRangeOption(
+      searchParams.usersRange,
+      searchParams.usersRangeFrom,
+      searchParams.usersRangeTo
+    ) || RANGE_OPTIONS.last_7_days;
 
-const DashboardPage = async ({ params }: DashboardPageProps) => {
   const [
     salesData,
     usersData,
@@ -34,8 +54,8 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
     stockCount,
     usersCount,
   ] = await Promise.all([
-    getSalesData(subDays(new Date(), 5), new Date()),
-    getUserData(subDays(new Date(), 5), new Date()),
+    getSalesData(ordersRangeOption.startDate, ordersRangeOption.endDate),
+    getUserData(usersRangeOption?.startDate, usersRangeOption?.endDate),
     getTotalRevenue(params.storeId),
     getGraphRevenue(params.storeId),
     getSalesCount(params.storeId),
@@ -110,16 +130,18 @@ const DashboardPage = async ({ params }: DashboardPageProps) => {
             <Overview data={graphRevenue} />
           </CardContent>
         </Card>
-        <Card className="p-2">
-          <CardHeader className="font-bold text-xl">Vendas por dia</CardHeader>
+        <ChartCard
+          title="Vendas por Período"
+          selectRangeLabel={ordersRangeOption.label}
+          queryKey="ordersRange">
           <OrdersByDayChart data={salesData.chartData} />
-        </Card>
-        <Card className="p-2">
-          <CardHeader className="font-bold text-xl">
-            Usuários por dia
-          </CardHeader>
+        </ChartCard>
+        <ChartCard
+          title="Usuários por Período"
+          selectRangeLabel={usersRangeOption?.label}
+          queryKey="usersRange">
           <UsersByDayChart data={usersData.chartData} />
-        </Card>
+        </ChartCard>
       </div>
     </div>
   );
