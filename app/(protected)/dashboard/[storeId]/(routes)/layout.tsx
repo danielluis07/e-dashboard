@@ -4,6 +4,23 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { redirect } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { BackForward } from "../../_components/back-forward";
+import { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { storeId: string };
+}): Promise<Metadata> {
+  const store = await db.store.findFirst({
+    where: {
+      id: params.storeId,
+    },
+  });
+
+  return {
+    title: `${store?.name} | Dashboard`,
+  };
+}
 
 export default async function DashboardLayout({
   children,

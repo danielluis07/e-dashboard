@@ -24,6 +24,14 @@ enum LogisticStatus {
   DELIVERED
 }
 
+enum NotificationType {
+  NEW_USER
+  NEW_REVIEW
+  NEW_ORDER
+  ORDER_PURCHASED
+  ORDER_CANCELED
+}
+
 model MyUser {
   id                    String                    @id @default(cuid())
   name                  String?
@@ -31,6 +39,7 @@ model MyUser {
   emailVerified         DateTime?
   image                 String?
   password              String?
+  notifications         Notification[]
   accounts              Account[]
   isTwoFactorEnabled    Boolean                   @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
@@ -374,4 +383,23 @@ model ShippingMethod {
   updatedAt             DateTime  @updatedAt
 
   @@index([name])
+}
+
+model Notification {
+  id             String    @id @default(uuid())
+  type           NotificationType
+  message        String
+  myUserId       String?
+  storeId        String
+  userId         String?
+  orderId        String?
+  orderNumber    Int?
+  reviewId       String?
+  viewed         Boolean   @default(false)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  myUser         MyUser?   @relation(fields: [myUserId], references: [id], onDelete: SetNull)
+  // user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  @@index([myUserId, storeId])
+  // @@index([userId])
 }

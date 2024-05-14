@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { pusherServer } from "@/lib/pusher";
-import { Notification } from "@/hooks/use-notifications";
+import { Notification } from "@/types";
 
 export async function POST(
   req: Request,
@@ -52,6 +52,15 @@ export async function POST(
       data: {
         userId: user.id,
         storeId,
+      },
+    });
+
+    await db.notification.create({
+      data: {
+        storeId,
+        message: "Um novo usuário se cadastrou!",
+        userId: id,
+        type: "NEW_USER",
       },
     });
 

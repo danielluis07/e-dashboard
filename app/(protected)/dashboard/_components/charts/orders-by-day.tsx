@@ -19,6 +19,11 @@ interface OrdersByDayChartProps {
 }
 
 export const OrdersByDayChart = ({ data }: OrdersByDayChartProps) => {
+  const error = console.error;
+  console.error = (...args: any) => {
+    if (/defaultProps/.test(args[0])) return;
+    error(...args);
+  };
   return (
     <ResponsiveContainer width="100%" minHeight={300}>
       <LineChart data={data} width={500} height={200}>

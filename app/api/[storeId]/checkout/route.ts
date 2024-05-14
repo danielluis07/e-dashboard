@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 import { NextResponse } from "next/server";
-import { Notification } from "@/hooks/use-notifications";
+import { Notification } from "@/types";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { pusherServer } from "@/lib/pusher";
@@ -128,11 +128,20 @@ export async function POST(
     cancel_url: `${process.env.NEXT_PUBLIC_API_URL}/cart/canceled=1`,
     metadata: {
       orderId: order.id,
+      storeId: params.storeId,
+    },
+  });
+
+  await db.notification.create({
+    data: {
+      storeId: params.storeId,
+      orderId: order.id,
+      message: "Você recebeu um novo pedido!",
+      type: "NEW_ORDER",
     },
   });
 
   await pusherServer.trigger(params.storeId, "orders:new", {
-    id: Math.random().toString(),
     message: "Você recebeu um novo pedido!",
     orderId: order.id,
     orderNumber: order.number,

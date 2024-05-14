@@ -10,13 +10,13 @@ import { LuArrowLeftFromLine } from "react-icons/lu";
 import { LuArrowRightFromLine } from "react-icons/lu";
 import { pusherClient } from "@/lib/pusher";
 import { useParams } from "next/navigation";
-import { useNotifications } from "@/hooks/use-notifications";
-import { Notification } from "@/hooks/use-notifications";
+import { Notification } from "@/types";
 import { toast } from "sonner";
 import { MdOutlineRateReview } from "react-icons/md";
 import { Notifications } from "./notifications";
 import { FiPackage } from "react-icons/fi";
 import { FaUser } from "react-icons/fa";
+import { useQuery } from "@tanstack/react-query";
 
 interface SideBarProps {
   name: string | null | undefined;
@@ -27,37 +27,52 @@ interface SideBarProps {
 export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const params = useParams<{ storeId: string }>();
-  const notifications = useNotifications();
+  const URL = `${process.env.NEXT_PUBLIC_APP_URL}/api/${params.storeId}/notifications`;
+  const {
+    data: notifications = [],
+    isLoading,
+    error,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ["notifications", params.storeId],
+    queryFn: async () => {
+      const res = await fetch(URL, { cache: "no-cache" });
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
+    },
+    refetchOnWindowFocus: false,
+  });
 
   useEffect(() => {
     pusherClient.subscribe(params.storeId);
 
     const newUser = (data: Notification) => {
-      notifications.addItem(data);
       toast.success(data.message, {
         icon: <FaUser className="text-sky-500" />,
       });
+      refetch();
     };
 
     const newReview = (data: Notification) => {
-      notifications.addItem(data);
       toast.success(data.message, {
         icon: <MdOutlineRateReview className="text-slate-500" />,
       });
+      refetch();
     };
 
     const newOrder = (data: Notification) => {
-      notifications.addItem(data);
       toast.success(data.message, {
         icon: <FiPackage className="text-yellow-500" />,
       });
+      refetch();
     };
 
     const confirmedOrder = (data: Notification) => {
-      notifications.addItem(data);
       toast.success(data.message, {
         icon: <FiPackage className="text-green-500" />,
       });
+      refetch();
     };
 
     pusherClient.bind("users:new", newUser);
@@ -72,7 +87,7 @@ export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
       pusherClient.unbind("orders:new");
       pusherClient.unbind("orders:confirmed");
     };
-  }, [params.storeId, notifications]);
+  }, [params.storeId]);
 
   return (
     <div
@@ -101,7 +116,10 @@ export const Sidebar = ({ name, stores, imageUrl }: SideBarProps) => {
             </div>
           </div>
           <div className="flex justify-center p-2 pt-3">
-            <Notifications />
+            <Notifications
+              notifications={notifications}
+              isLoading={isLoading}
+            />
           </div>
         </div>
         <div className="flex items-center justify-between">

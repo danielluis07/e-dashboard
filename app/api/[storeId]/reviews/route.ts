@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { Notification } from "@/hooks/use-notifications";
+import { Notification } from "@/types";
 import { pusherServer } from "@/lib/pusher";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -87,8 +88,16 @@ export async function POST(
       },
     });
 
+    await db.notification.create({
+      data: {
+        storeId: params.storeId,
+        reviewId: review.id,
+        message: "Você recebeu uma nova avaliação!",
+        type: "NEW_REVIEW",
+      },
+    });
+
     await pusherServer.trigger(params.storeId, "reviews:new", {
-      id: Math.random().toString(),
       message: "Você recebeu uma nova avaliação!",
       reviewId: review.id,
       createdAt: new Date(),

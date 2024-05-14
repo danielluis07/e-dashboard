@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { Notification } from "@/hooks/use-notifications";
+import { Notification } from "@/types";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/lib/db";
 import { pusherServer } from "@/lib/pusher";
@@ -34,7 +34,10 @@ export async function POST(req: Request) {
     // Process the checkout session completion
     try {
       const order = await db.order.update({
-        where: { id: session.metadata?.orderId },
+        where: {
+          id: session.metadata?.orderId,
+          storeId: session.metadata?.storeId,
+        },
         data: {
           status: "PAID",
           paidAt: new Date(),
@@ -89,6 +92,15 @@ export async function POST(req: Request) {
           },
         });
       }
+
+      await db.notification.create({
+        data: {
+          storeId: order.storeId,
+          orderId: order.id,
+          message: "Pagamento confirmado!",
+          type: "ORDER_PURCHASED",
+        },
+      });
 
       await pusherServer.trigger(order.storeId, "orders:confirmed", {
         id: Math.random().toString(),

@@ -5,6 +5,7 @@ import { auth } from "@/auth";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import ModalProvider from "@/providers/modal-provider";
+import QueryProvider from "@/providers/query-provider";
 
 const nunito = Nunito({ subsets: ["latin"] });
 
@@ -23,9 +24,11 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={nunito.className}>
-          <Toaster />
-          <ModalProvider />
-          {children}
+          <QueryProvider>
+            <Toaster />
+            <ModalProvider />
+            {children}
+          </QueryProvider>
         </body>
       </html>
     </SessionProvider>
