@@ -73,7 +73,7 @@ export const UserInfo = ({ user }: UserInfoProps) => {
       <div className="flex items-center gap-x-5">
         <div className="relative size-28 rounded-full overflow-hidden">
           <Image
-            src={user?.imageUrl ?? placeholder}
+            src={user?.imageUrl ? user?.imageUrl : placeholder}
             fill
             alt="usuario"
             sizes="(max-width: 3840px) 112px"

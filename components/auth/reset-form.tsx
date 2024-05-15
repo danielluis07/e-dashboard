@@ -49,6 +49,7 @@ export const ResetForm = () => {
     <CardWrapper
       headerLabel="Informe seu email para resetar a senha"
       backButtonLabel="Voltar ao login"
+      showSocial={false}
       backButtonHref="/auth/login">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

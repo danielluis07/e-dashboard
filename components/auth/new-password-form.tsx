@@ -53,6 +53,7 @@ export const NewPasswordForm = () => {
     <CardWrapper
       headerLabel="Informe uma nova senha"
       backButtonLabel="Voltar ao login"
+      showSocial={false}
       backButtonHref="/auth/login">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

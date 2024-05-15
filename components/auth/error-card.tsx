@@ -7,6 +7,7 @@ export const ErrorCard = () => {
     <CardWrapper
       headerLabel="Algo deu errado!"
       backButtonHref="/auth/login"
+      showSocial={false}
       backButtonLabel="Back to login">
       <div className="w-full flex justify-center items-center">
         <ExclamationTriangleIcon className="text-destructive" />
