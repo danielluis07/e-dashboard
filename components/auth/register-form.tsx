@@ -22,11 +22,13 @@ import { FormSuccess } from "../form-success";
 import { register } from "@/actions/register";
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState<string | boolean>(false);
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<z.infer<typeof RegisterSchema>>({
@@ -44,8 +46,12 @@ export const RegisterForm = () => {
 
     startTransition(() => {
       register(values).then((data) => {
-        setError(data.error);
-        setSuccess(data.success);
+        if (data?.error) {
+          setError(data?.error);
+        } else {
+          router.push("/auth/login");
+        }
+        /* setSuccess(data.success); */
       });
     });
   };
@@ -154,7 +160,7 @@ export const RegisterForm = () => {
             />
           </div>
           <FormError message={error} />
-          <FormSuccess message={success} />
+          {/* <FormSuccess message={success} /> */}
           <Button disabled={isPending} type="submit" className="w-full">
             Criar conta
           </Button>

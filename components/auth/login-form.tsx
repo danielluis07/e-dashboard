@@ -58,10 +58,10 @@ export const LoginForm = () => {
             setError(data.error);
           }
 
-          if (data?.success) {
+          /* if (data?.success) {
             form.reset();
             setSuccess(data.success);
-          }
+          } */
 
           if (data?.twoFactor) {
             setShowTwoFactor(true);
@@ -193,7 +193,7 @@ export const LoginForm = () => {
               </>
             )}
           </div>
-          <FormSuccess message={success} />
+          {/*  <FormSuccess message={success} /> */}
           <FormError message={error || urlError} />
           <Button type="submit" className="w-full" disabled={isPending}>
             {showTwoFactor ? "Confirmar" : "Login"}

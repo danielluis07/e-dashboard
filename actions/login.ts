@@ -34,7 +34,7 @@ export const login = async (
     return { error: "Email não cadastrado!" };
   }
 
-  if (!existingUser.emailVerified) {
+  /*   if (!existingUser.emailVerified) {
     const verificationToken = await generateVerificationToken(
       existingUser.email
     );
@@ -45,7 +45,7 @@ export const login = async (
     );
 
     return { success: "Email de confirmação enviado!" };
-  }
+  } */
 
   if (existingUser.isTwoFactorEnabled && existingUser.email) {
     const isPasswordValid = await bcrypt.compare(

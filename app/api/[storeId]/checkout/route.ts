@@ -27,7 +27,7 @@ export async function POST(
   { params }: { params: { storeId: string } }
 ) {
   // Assuming the body now contains products with sizeIds
-  const { products, userId } = await req.json();
+  const { products, userId, url } = await req.json();
 
   if (!userId) {
     return new NextResponse("UserId is required", { status: 400 });
@@ -124,8 +124,8 @@ export async function POST(
   const session = await stripe.checkout.sessions.create({
     line_items,
     mode: "payment",
-    success_url: `${process.env.NEXT_PUBLIC_API_URL}/cart/success=1`,
-    cancel_url: `${process.env.NEXT_PUBLIC_API_URL}/cart/canceled=1`,
+    success_url: `${url}/cart/success=1`,
+    cancel_url: `${url}/cart/canceled=1`,
     metadata: {
       orderId: order.id,
       storeId: params.storeId,
