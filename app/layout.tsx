@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { Analytics } from "@vercel/analytics/react";
 import ModalProvider from "@/providers/modal-provider";
 import QueryProvider from "@/providers/query-provider";
 
@@ -28,6 +29,7 @@ export default async function RootLayout({
             <Toaster />
             <ModalProvider />
             {children}
+            <Analytics />
           </QueryProvider>
         </body>
       </html>
