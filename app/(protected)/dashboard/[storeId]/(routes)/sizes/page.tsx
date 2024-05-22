@@ -8,6 +8,9 @@ const SizesPage = async ({ params }: { params: { storeId: string } }) => {
     _sum: {
       quantity: true,
     },
+    where: {
+      storeId: params.storeId,
+    },
   });
 
   const formattedSizes: SizesColumnProps[] = groupedSizes.map((item) => ({
